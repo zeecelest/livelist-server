@@ -4,7 +4,7 @@ process.env.JWT_SECRET = 'test-jwt-secret';
 process.env.JWT_EXPIRY = '3m';
 require('dotenv').config();
 process.env.TEST_DATABASE_URL =
-  'postgresql://dunder_mifflin@localhost/SocialPlaylist-test';
+  'postgresql://dunder_mifflin@localhost/social-playlist-test';
 
 const { expect } = require('chai');
 const supertest = require('supertest');
