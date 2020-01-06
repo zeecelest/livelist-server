@@ -36,7 +36,6 @@ describe('User Endpoints', function() {
 
       it(`responds with 400 required error when '${field}' is missing`, () => {
         delete registerAttemptBody[field];
-
         return supertest(app)
           .post('/api/user')
           .send(registerAttemptBody)
@@ -155,7 +154,7 @@ describe('User Endpoints', function() {
           .send(newUser)
           .expect(res =>
             db
-              .from('user')
+              .from('users')
               .select('*')
               .where({ id: res.body.id })
               .first()
