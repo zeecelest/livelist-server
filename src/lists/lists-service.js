@@ -1,6 +1,6 @@
 const ListService = {
   getAllLists(knex) {
-    return knex.select('*').from('lists');
+    return knex.select('*').from('lists'); // will need to pull more specifically
   },
   insertListmark(knex, newList) {
     return knex

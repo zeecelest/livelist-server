@@ -9,8 +9,12 @@ listsRouter
   .use(requireAuth)
   .route('/')
   .get((req, res, next) => {
-    const lists = ListsService.getAllLists(req.app.get('db'));
-    res.json({ lists });
-    return res.status(200);
+    try {
+      ListsService.getAllLists(req.app.get('db')).then(lists => {
+        res.status(200).json(lists);
+      });
+    } catch (error) {
+      next(error);
+    }
   });
 module.exports = listsRouter;
