@@ -4,9 +4,10 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
 const errorHandler = require('./middleware/error-handler');
-const authRouter = require('./routes/auth/auth-router');
-const userRouter = require('./routes/users/users-router');
-
+const authRouter = require('./auth/auth-router');
+const userRouter = require('./users/users-router');
+const listsRouter = require('./lists/lists-router');
+const spotsRouter = require('./spots/spots-router');
 const app = express();
 
 app.use(
@@ -19,8 +20,8 @@ app.use(helmet());
 
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
-app.use('/api/lists', userRouter);
-app.use('/api/spots', userRouter);
+app.use('/api/lists', listsRouter);
+// app.use('/api/spots', spotsRouter);
 
 app.use(errorHandler);
 
