@@ -4,7 +4,9 @@ CREATE TABLE spots (
     tags varchar(50),
     address varchar(50),
     city varchar(50),
-    state varchar(50)
+    state varchar(50),
+    lat decimal,
+    lon decimal
 );
 CREATE TABLE lists (
     id serial PRIMARY KEY,
@@ -15,10 +17,14 @@ CREATE TABLE lists (
     public BOOLEAN
 );
 CREATE TABLE lists_spots (
-    list_id serial INTEGER REFERENCES lists(id) ON DELETE CASCADE NULL,
-    spot_id serial INTEGER REFERENCES spots(id) ON DELETE CASCADE NULL
+    list_id serial PRIMARY KEY,
+    spot_id serial PRIMARY KEY,
+    FOREIGN KEY (list_id) REFERENCES lists(id),
+    FOREIGN KEY (spot_id) REFERENCES spots(id)
 );
 CREATE TABLE users_lists (
-  users_id serial INTEGER REFERENCES users(id) ON DELETE CASCADE NULL,
-  list_id serial INTEGER REFERENCES lists(id) ON DELETE CASCADE NULL
+  users_id serial PRIMARY KEY,
+  FOREIGN KEY (users_id) REFERENCES users(id),
+  list_id serial PRIMARY,
+  FOREIGN KEY (lists_id) REFERENCES lists(id)
 );
