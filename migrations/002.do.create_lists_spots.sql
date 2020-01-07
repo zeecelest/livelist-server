@@ -18,13 +18,12 @@ CREATE TABLE lists (
 );
 CREATE TABLE lists_spots (
     list_id serial,
-    FOREIGN KEY (list_id) REFERENCES lists(id),
-    spot_id serial,
-    FOREIGN KEY (spot_id) REFERENCES spots(id)
+    spot_id serial
 );
-CREATE TABLE users_lists (
-  users_id serial,
-  FOREIGN KEY (users_id) REFERENCES users(id),
-  list_id serial,
-  FOREIGN KEY (lists_id) REFERENCES lists(id)
-);
+ALTER TABLE lists_spots ALTER COLUMN list_id REFERENCES lists(id);
+-- CREATE TABLE users_lists (
+--   users_id serial,
+--   FOREIGN KEY (users_id) REFERENCES users(id),
+--   list_id serial,
+--   FOREIGN KEY (lists_id) REFERENCES lists(id)
+-- );
