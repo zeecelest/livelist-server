@@ -22,10 +22,9 @@ CREATE TABLE lists_spots (
     FOREIGN KEY (list_id) REFERENCES lists(id),
     FOREIGN KEY (spot_id) REFERENCES spots(id)
 );
--- ALTER TABLE lists_spots ALTER COLUMN list_id REFERENCES lists(id);
--- CREATE TABLE users_lists (
---   users_id serial,
---   FOREIGN KEY (users_id) REFERENCES users(id),
---   list_id serial,
---   FOREIGN KEY (lists_id) REFERENCES lists(id)
--- );
+CREATE TABLE users_lists (
+  users_id INTEGER,
+  list_id INTEGER,
+  FOREIGN KEY (users_id) REFERENCES users(id),
+  FOREIGN KEY (list_id) REFERENCES lists(id)
+);

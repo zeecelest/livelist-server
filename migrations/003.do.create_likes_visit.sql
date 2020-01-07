@@ -1,13 +1,13 @@
 CREATE TABLE liked_by (
-    users_id serial PRIMARY KEY,
+    users_id INTEGER,
+    list_id INTEGER,
     FOREIGN KEY (users_id) REFERENCES users(id),
-    list_id serial PRIMARY KEY REFERENCES lists(id) ON DELETE CASCADE NULL,
-    FOREIGN KEY (list_id) REFERENCES lists(id),
+    FOREIGN KEY (list_id) REFERENCES lists(id)
 );
 
 CREATE TABLE visited_by (
-    users_id serial PRIMARY KEY ON DELETE CASCADE NULL,
+    users_id INTEGER,
+    list_id INTEGER,
     FOREIGN KEY (users_id) REFERENCES users(id),
-    list_id serial PRIMARY KEY ON DELETE CASCADE NULL,
-    FOREIGN KEY (list_id) REFERENCES lists(id),
+    FOREIGN KEY (list_id) REFERENCES lists(id)
 );
