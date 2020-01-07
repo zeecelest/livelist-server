@@ -27,26 +27,35 @@ VALUES
 -- lists table
 INSERT INTO "lists" ("id", "name", "tags", "city", "state", "is_public" )
 VALUES 
-    ()
+    (1, 'Date night', "#datenight", "CA", "Glendale", false ),
+    (2, 'Saturday fun night', "#nightout", "CA", "Los Angeles", true );
 
 -- lists_spots table
 INSERT INTO "lists_spots" ("list_id", "spot_id") 
 VALUES 
-    ()
+    (1,1),
+    (2,2);
 
 -- users_lists table
 INSERT INTO "users_lists" ("users_id", "list_id")
 VALUES
-()
+    (1,1),
+    (2,1);
 
 -- liked_by table
 INSERT INTO "liked_by" ("users_id", "list_id")
 VALUES
-()
+    (1,1),
+    (1,2),
+    (2,1),
+    (2,2);
 
 -- visited_by table
 INSERT INTO "visited_by" ("users_id", "list_id")
 VALUES
-()
+    (1,1),
+    (1,2),
+    (2,1),
+    (2,2);
 
 COMMIT;
