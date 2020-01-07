@@ -15,10 +15,10 @@ CREATE TABLE lists (
     public BOOLEAN
 );
 CREATE TABLE lists_spots (
-    list_id serial PRIMARY KEY,
-    spot_id serial PRIMARY KEY
+    list_id serial INTEGER REFERENCES lists(id) ON DELETE CASCADE NULL,
+    spot_id serial INTEGER REFERENCES spots(id) ON DELETE CASCADE NULL
 );
 CREATE TABLE users_lists (
-  users_id serial PRIMARY KEY,
-  list_id serial PRIMARY KEY
+  users_id serial INTEGER REFERENCES users(id) ON DELETE CASCADE NULL,
+  list_id serial INTEGER REFERENCES lists(id) ON DELETE CASCADE NULL
 );
