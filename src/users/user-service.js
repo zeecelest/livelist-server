@@ -38,7 +38,9 @@ const UserService = {
     return {
       id: user.id,
       name: user.name,
-      username: user.username
+      username: user.username,
+      city: user.city,
+      state: user.state
     };
   }
 };
