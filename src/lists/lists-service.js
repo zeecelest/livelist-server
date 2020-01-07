@@ -2,7 +2,7 @@ const ListService = {
   getAllLists(knex) {
     return knex.select('*').from('lists'); // will need to pull more specifically
   },
-  insertListmark(knex, newList) {
+  insertList(knex, newList) {
     return knex
       .insert(newList)
       .into('lists')
@@ -16,12 +16,12 @@ const ListService = {
       .where('id', id)
       .first();
   },
-  deleteListmark(knex, id) {
+  deleteList(knex, id) {
     return knex('lists')
       .where({ id })
       .delete();
   },
-  updatelists(knex, id, newListField) {
+  updateList(knex, id, newListField) {
     return knex('lists')
       .where({ id })
       .update(newListField);
