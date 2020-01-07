@@ -14,13 +14,15 @@ CREATE TABLE lists (
     tags varchar(50),
     city varchar(50),
     state varchar(50),
-    public BOOLEAN
+    is_public BOOLEAN
 );
 CREATE TABLE lists_spots (
-    list_id serial,
-    spot_id serial
+    list_id INTEGER,
+    spot_id INTEGER,
+    FOREIGN KEY (list_id) REFERENCES lists(id),
+    FOREIGN KEY (spot_id) REFERENCES spots(id)
 );
-ALTER TABLE lists_spots ALTER COLUMN list_id REFERENCES lists(id);
+-- ALTER TABLE lists_spots ALTER COLUMN list_id REFERENCES lists(id);
 -- CREATE TABLE users_lists (
 --   users_id serial,
 --   FOREIGN KEY (users_id) REFERENCES users(id),
