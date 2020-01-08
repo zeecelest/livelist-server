@@ -31,11 +31,11 @@ const ListService = {
       .returning('*')
       .then(rows => rows[0]);
   },
-  getById(knex, id) {
+  getListById(knex, id) {
     return knex
       .from('lists')
       .select('*')
-      .where('id', id)
+      .where({ id })
       .first();
   },
   deleteListReference(knex, list_id, user_id) {
