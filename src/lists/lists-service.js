@@ -1,19 +1,34 @@
 const ListService = {
   getAllLists(knex) {
     return knex
-      .select(
-        '* AS likes',
-        'lists.id',
-        'lists.name',
-        'lists.tags',
-        'lists.city',
-        'lists.state',
-        'lists.is_public'
-      )
-      .from('liked_by')
-      .rightJoin('lists')
-      .on((lists.id = likes.id))
-      .group(lists.id);
+      .raw(`
+        SELECT count(list_id) AS liked,
+               lists.id, 
+               lists.name, 
+               lists.tags, 
+               lists.city, 
+               lists.state, 
+               lists.is_public 
+               FROM liked_by 
+               RIGHT JOIN lists 
+               ON lists.id = liked_by.list_id
+               GROUP BY lists.id;
+        `)
+    //      .select(
+    //        'count * AS likes',
+    //        'lists.id',
+    //        'lists.name',
+    //        'lists.tags',
+    //        'lists.city',
+    //        'lists.state',
+    //        'lists.is_public'
+    //      )
+    //      .rightJoin(
+    //        'lists',
+    //        'liked_by.list_id',
+    //        'lists.id'
+    //      )
+    //      .where('lists.is_public', 'true')
   },
 
   //select count(*) as likes,
