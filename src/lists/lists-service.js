@@ -38,6 +38,11 @@ const ListService = {
       .where('id', id)
       .first();
   },
+  deleteListReference(knex, list_id, user_id) {
+    return knex('users_lists')
+      .where({ list_id, user_id })
+      .delete();
+  },
   deleteList(knex, id) {
     return knex('lists')
       .where({ id })

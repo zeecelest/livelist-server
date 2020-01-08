@@ -20,13 +20,13 @@ listsRouter
   .post(jsonBodyParser, (req, res, next) => {
     const { city, state, name, is_public } = req.body;
     for (const field of ['name', 'city', 'state', 'is_public'])
-      if (!req.body[field])
+      if (!req.body[field] || !req.user.id)
         return res.status(400).json({
           error: `Missing '${field}' in request body`
         });
     try {
       const newList = {
-        city, // <== need to keep some type of standard
+        city,
         state,
         name,
         is_public
@@ -36,18 +36,55 @@ listsRouter
       next(error);
     }
   });
-
 listsRouter
   .use(requireAuth)
-  .route('/:city')
+  .route('/:list_id')
   .get((req, res, next) => {
     try {
-      ListsService.getAllListsFromCity(
-        req.app.get('db'),
-        req.params.city
-      ).then(lists => res.status(200).json(lists));
+      ListsService.getListById(req.app.get('db'), req.params.list_id).then(
+        list => {
+          res.status(200).json(list);
+        }
+      );
+    } catch (error) {
+      next(error);
+    }
+  })
+  .delete((req, res, next) => {
+    try {
+      let db = req.app.get('db');
+      ListsService.deleteListReference(
+        db,
+        req.user.id,
+        req.params.list_id
+      ).then(res.status(202));
+    } catch (error) {
+      next(error);
+    }
+  })
+  .patch((req, res, next) => {
+    try {
+      ListsService.updateList(req.app.get('db'), req.body.editList).then(
+        list => {
+          res.status(200).json(list);
+        }
+      );
     } catch (error) {
       next(error);
     }
   });
+
+// listsRouter
+//   .use(requireAuth)
+//   .route('/:city')
+//   .get((req, res, next) => {
+//     try {
+//       ListsService.getAllListsFromCity(
+//         req.app.get('db'),
+//         req.params.city
+//       ).then(lists => res.status(200).json(lists));
+//     } catch (error) {
+//       next(error);
+//     }
+//   });
 module.exports = listsRouter;
