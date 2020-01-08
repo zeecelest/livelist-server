@@ -20,6 +20,7 @@ const ListService = {
       .then(rows => rows.rows);
   },
   getAllListsFromCity(knex, city) {
+    // needs implementation
     return knex
       .select('*')
       .from('lists')
@@ -45,6 +46,7 @@ const ListService = {
       .delete();
   },
   deleteList(knex, id) {
+    // currently unused
     return knex('lists')
       .where({ id })
       .delete();
