@@ -61,4 +61,16 @@ userRouter.route('/:username').get((req, res, next) => {
   }
 });
 
+userRouter.route('/lists/:id').get((req, res, next) => {
+  try {
+    UserService.returnAllListsByUserId(req.app.get('db'), req.params.id).then(
+      lists => {
+        res.status(200).json(lists);
+      }
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = userRouter;

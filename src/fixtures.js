@@ -12,7 +12,7 @@ const payload = {
       tags: '#bestdrinks #goodmusic',
       address: '1214 Idaho Ave',
       city: 'Santa Monica',
-      state: 'CA', 
+      state: 'CA',
       lat: 34.029494,
       lng: -118.494998
     },
@@ -67,6 +67,6 @@ const payload = {
       lng: -118.487266
     }
   ]
-}
+};
 
-module.exports = payload
+module.exports = payload;

@@ -14,6 +14,15 @@ const UserService = {
       .where({ username })
       .first();
   },
+  returnAllListsByUserId(db, id) {
+    return db
+      .select('lists_id')
+      .from('users_lists')
+      .where('user_id', id)
+      .join('lists')
+      .on('lists.id', '=', 'users_lists.list_id')
+      .returning('lists');
+  },
   insertUser(db, newUser) {
     return db
       .insert(newUser)
