@@ -19,13 +19,6 @@ const ListService = {
       )
       .then(rows => rows.rows);
   },
-  getListByIdTwo(knex, id) {
-    return knex.raw(
-      `
-      SELECT * from lists where
-      `
-    );
-  },
   getAllListsFromCity(knex, city) {
     return knex
       .select('*')

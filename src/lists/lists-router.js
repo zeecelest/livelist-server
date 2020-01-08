@@ -18,6 +18,7 @@ listsRouter
     }
   })
   .post(jsonBodyParser, (req, res, next) => {
+    // need to add verification check to make sure that user owns said list
     const { city, state, name, is_public } = req.body;
     for (const field of ['name', 'city', 'state', 'is_public'])
       if (!req.body[field] || !req.user.id)
@@ -68,6 +69,7 @@ listsRouter
   })
   .patch((req, res, next) => {
     try {
+      // need to add verification check to make sure that user owns said list
       ListsService.updateList(req.app.get('db'), req.body.editList).then(
         list => {
           res.status(200).json(list);

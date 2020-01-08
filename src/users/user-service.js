@@ -9,6 +9,11 @@ const UserService = {
       .first()
       .then(user => !!user);
   },
+  returnUserWithUsername(db, username) {
+    return db('users')
+      .where({ username })
+      .first();
+  },
   insertUser(db, newUser) {
     return db
       .insert(newUser)

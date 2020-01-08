@@ -48,4 +48,17 @@ userRouter.post('/', jsonBodyParser, async (req, res, next) => {
   }
 });
 
+userRouter.route('/:username').get((req, res, next) => {
+  try {
+    UserService.returnUserWithUsername(
+      req.app.get('db'),
+      req.params.username
+    ).then(user => {
+      res.status(200).json(user.name);
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = userRouter;
