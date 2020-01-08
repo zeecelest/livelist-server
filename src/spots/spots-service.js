@@ -1,5 +1,5 @@
 const SpotsService = {
-  getAllSpot(knex) {
+  getAllSpots(knex) {
     return knex.select('*').from('spots');
   },
   insertSpot(knex, newSpots) {
@@ -13,7 +13,7 @@ const SpotsService = {
     return knex
       .from('spots')
       .select('*')
-      .where('id', id)
+      .where({ id })
       .first();
   },
   deleteSpots(knex, id) {
