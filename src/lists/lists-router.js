@@ -11,7 +11,7 @@ listsRouter
   .get((req, res, next) => {
     try {
       ListsService.getAllLists(req.app.get('db')).then(lists => {
-        res.status(200).send(lists.rows);
+        res.status(200).send(lists);
       });
     } catch (error) {
       next(error);
