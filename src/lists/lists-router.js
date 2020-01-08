@@ -1,6 +1,6 @@
 const express = require('express');
 const ListsService = require('./lists-service');
-const {requireAuth} = require('../middleware/jwt-auth');
+const { requireAuth } = require('../middleware/jwt-auth');
 
 const listsRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -10,27 +10,26 @@ listsRouter
   .route('/')
   .get((req, res, next) => {
     try {
-      ListsService.getAllLists(req.app.get('db'))
-        .then(lists => {
-          res.status(200).send(lists.rows);
+      ListsService.getAllLists(req.app.get('db')).then(lists => {
+        res.status(200).send(lists.rows);
       });
     } catch (error) {
       next(error);
     }
   })
   .post(jsonBodyParser, (req, res, next) => {
-    const {city, state, name, is_public} = req.body;
+    const { city, state, name, is_public } = req.body;
     for (const field of ['name', 'city', 'state', 'is_public'])
       if (!req.body[field] || !req.user.id)
         return res.status(400).json({
-          error: `Missing '${field}' in request body`,
+          error: `Missing '${field}' in request body`
         });
     try {
       const newList = {
         city,
         state,
         name,
-        is_public,
+        is_public
       };
       ListsService.insertList(res.app.get('db'), newList);
     } catch (error) {
@@ -42,10 +41,10 @@ listsRouter
   .route('/:list_id')
   .get((req, res, next) => {
     try {
-      ListsService.getListById(req.app.get('db'), req.params.list_id).then(
+      ListsService.getListByIdTwo(req.app.get('db'), req.params.list_id).then(
         list => {
           res.status(200).json(list);
-        },
+        }
       );
     } catch (error) {
       next(error);
@@ -57,11 +56,11 @@ listsRouter
       ListsService.deleteListReference(
         db,
         req.user.id,
-        req.params.list_id,
+        req.params.list_id
       ).then(
         res
           .status(202)
-          .json({message: `Record ${req.params.list_id} was deleted`}),
+          .json({ message: `Record ${req.params.list_id} was deleted` })
       );
     } catch (error) {
       next(error);
@@ -72,7 +71,7 @@ listsRouter
       ListsService.updateList(req.app.get('db'), req.body.editList).then(
         list => {
           res.status(200).json(list);
-        },
+        }
       );
     } catch (error) {
       next(error);

@@ -8,39 +8,36 @@ const ListService = {
                lists.city, 
                lists.state, 
                lists.is_public 
-               FROM liked_by 
+               FROM liked_by
                RIGHT JOIN lists 
                ON lists.id = liked_by.list_id
+               WHERE is_public = true
                GROUP BY lists.id;
         `);
-    //      .select(
-    //        'count * AS likes',
-    //        'lists.id',
-    //        'lists.name',
-    //        'lists.tags',
-    //        'lists.city',
-    //        'lists.state',
-    //        'lists.is_public'
-    //      )
-    //      .rightJoin(
-    //        'lists',
-    //        'liked_by.list_id',
-    //        'lists.id'
-    //      )
-    //      .where('lists.is_public', 'true')
   },
-
-  //select count(*) as likes,
-  //lists.id, lists.name, lists.tags, lists.city, lists.state, lists.is_public
-  //from liked_by right join lists on lists.id = liked_by.list_id group by lists.id;
-
+  getListByIdTwo(knex, id) {
+    return knex.raw(`
+    SELECT count(list_id) AS liked,
+    lists.id, 
+    lists.name, 
+    lists.tags, 
+    lists.city, 
+    lists.state, 
+    lists.is_public 
+    FROM liked_by 
+    RIGHT JOIN lists 
+    ON lists.id = liked_by.list_id
+    WHERE list.id = ${id}
+    GROUP BY lists.id
+    ;
+        `);
+  },
   getAllListsFromCity(knex, city) {
     return knex
       .select('*')
       .from('lists')
       .where({ is_public: true, city });
   },
-
   insertList(knex, newList) {
     return knex
       .insert(newList)
