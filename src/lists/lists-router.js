@@ -1,6 +1,7 @@
 const express = require('express');
 const ListsService = require('./lists-service');
 const {requireAuth} = require('../middleware/jwt-auth');
+const package = require('../fixtures')
 
 const listsRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -42,11 +43,12 @@ listsRouter
   .route('/:list_id')
   .get((req, res, next) => {
     try {
-      ListsService.getListById(req.app.get('db'), req.params.list_id).then(
-        list => {
-          res.status(200).json(list);
-        },
-      );
+      //    ListsService.getListById(req.app.get('db'), req.params.list_id).then(
+      //      list => {
+      //        res.status(200).json(list);
+      //  },
+      //);
+      res.status(200).json(package)
     } catch (error) {
       next(error);
     }
