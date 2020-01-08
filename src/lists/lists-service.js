@@ -1,7 +1,6 @@
 const ListService = {
   getAllLists(knex) {
-    return knex
-      .raw(`
+    return knex.raw(`
         SELECT count(list_id) AS liked,
                lists.id, 
                lists.name, 
@@ -13,7 +12,7 @@ const ListService = {
                RIGHT JOIN lists 
                ON lists.id = liked_by.list_id
                GROUP BY lists.id;
-        `)
+        `);
     //      .select(
     //        'count * AS likes',
     //        'lists.id',
