@@ -27,8 +27,9 @@ VALUES
 -- lists table
 INSERT INTO "lists" ("id", "name", "tags", "city", "state", "is_public" )
 VALUES 
-    (1, 'Date night', '#datenight', 'CA', 'Glendale', false ),
-    (2, 'Saturday fun night', '#nightout', 'CA', 'Los Angeles', true );
+    (1, 'Date night', '#datenight',  'Glendale','CA', false ),
+    (2, 'Saturday fun night', '#nightout',  'Los Angeles','CA', true )
+     (3, 'Weekday Routine', '#nightout',  'NYC','NY', true );
 
 -- lists_spots table
 INSERT INTO "lists_spots" ("list_id", "spot_id") 

@@ -7,7 +7,7 @@ const errorHandler = require('./middleware/error-handler');
 const authRouter = require('./auth/auth-router');
 const userRouter = require('./users/users-router');
 const listsRouter = require('./lists/lists-router');
-const spotsRouter = require('./spots/spots-router');
+//const spotsRouter = require('./spots/spots-router');
 const app = express();
 
 app.use(

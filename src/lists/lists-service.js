@@ -1,6 +1,15 @@
 const ListService = {
   getAllLists(knex) {
-    return knex.select('*').from('lists'); // will need to pull more specifically
+    return knex
+      .select('*')
+      .from('lists')
+      .where({ is_public: true });
+  },
+  getAllListsFromCity(knex, city) {
+    return knex
+      .select('*')
+      .from('lists')
+      .where({ is_public: true, city });
   },
   insertList(knex, newList) {
     return knex

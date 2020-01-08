@@ -17,4 +17,18 @@ listsRouter
       next(error);
     }
   });
+
+listsRouter
+  .use(requireAuth)
+  .route('/:city')
+  .get((req, res, next) => {
+    try {
+      ListsService.getAllListsFromCity(
+        req.app.get('db'),
+        req.params.city
+      ).then(lists => res.status(200).json(lists));
+    } catch (error) {
+      next(error);
+    }
+  });
 module.exports = listsRouter;
