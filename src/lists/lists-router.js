@@ -57,7 +57,11 @@ listsRouter
         db,
         req.user.id,
         req.params.list_id
-      ).then(res.status(202));
+      ).then(
+        res
+          .status(202)
+          .json({ message: `Record ${req.params.list_id} was deleted` })
+      );
     } catch (error) {
       next(error);
     }

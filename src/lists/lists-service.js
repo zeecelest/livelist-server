@@ -1,21 +1,24 @@
 const ListService = {
   getAllLists(knex) {
-    return knex.transaction(function(trx) {
-      return knex('lists')
-        .transacting(trx)
-        .returning('*')
-        .where({ is_public: true })
-        .then(res => {
-          return knex('liked_by')
-            .transacting(trx)
-            .count('*')
-            .where({ list_id: res[0].id })
-            .then(second_res => {
-              return { likes: second_res, lists: res };
-            });
-        });
-    });
+    return knex
+      .select(
+        '* AS likes',
+        'lists.id',
+        'lists.name',
+        'lists.tags',
+        'lists.city',
+        'lists.state',
+        'lists.is_public'
+      )
+      .from('liked_by')
+      .rightJoin('lists')
+      .on((lists.id = likes.id))
+      .group(lists.id);
   },
+
+  //select count(*) as likes,
+  //lists.id, lists.name, lists.tags, lists.city, lists.state, lists.is_public
+  //from liked_by right join lists on lists.id = liked_by.list_id group by lists.id;
 
   getAllListsFromCity(knex, city) {
     return knex
