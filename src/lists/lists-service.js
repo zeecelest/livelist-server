@@ -8,7 +8,7 @@ const ListService = {
         .then(res => {
           return knex('liked_by')
             .transacting(trx)
-            .returning('*')
+            .count('*')
             .where({ list_id: res[0].id })
             .then(second_res => {
               return { likes: second_res, lists: res };
