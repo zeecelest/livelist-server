@@ -18,8 +18,8 @@ spotsRouter
     }
   })
   .post(jsonBodyParser, (req, res, next) => {
-    const { name, address, city, state, lat, lon } = req.body;
-    for (const field of ['name', 'city', 'state', 'lat', 'lon', 'address'])
+    const { list_id, name, address, city, state } = req.body;
+    for (const field of ['list_id', 'name', 'city', 'state', 'address'])
       if (!req.body[field])
         return res.status(400).json({
           error: `Missing '${field}' in request body`
@@ -29,11 +29,9 @@ spotsRouter
         name,
         address,
         city,
-        state,
-        lat,
-        lon
+        state
       };
-      SpotsService.insertSpot(req.app.get('db'), newSpot);
+      SpotsService.insertSpot(req.app.get('db'), newSpot, list_id);
     } catch (error) {
       next(error);
     }

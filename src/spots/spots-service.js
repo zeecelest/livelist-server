@@ -2,7 +2,7 @@ const SpotsService = {
   getAllSpots(knex) {
     return knex.select('*').from('spots');
   },
-  insertSpot(knex, newSpots) {
+  insertSpot(knex, newSpots, list_id) {
     return knex
       .insert(newSpots)
       .into('spots')
