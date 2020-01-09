@@ -12,7 +12,7 @@ listsRouter
   .get((req, res, next) => {
     try {
       ListsService.getAllLists(req.app.get('db')).then(lists => {
-        res.status(200).send(lists);
+        res.status(200).send(lists.rows);
       });
     } catch (error) {
       next(error);
@@ -42,13 +42,35 @@ listsRouter
   .use(requireAuth)
   .route('/:list_id')
   .get((req, res, next) => {
+    let list = {};
+    let package = [];
+    let spots = [];
     try {
-      //    ListsService.getListById(req.app.get('db'), req.params.list_id).then(
-      //      list => {
-      //        res.status(200).json(list);
-      //  },
-      //);
-      res.status(200).json(package);
+      ListsService.getListById(req.app.get('db'), req.params.list_id).then(
+        resp => {
+          list = {
+            list_name: resp.rows[0].list_name,
+            list_id: resp.rows[0].list_id,
+            tags: resp.rows[0].list_tags,
+            created_by: resp.rows[0].created_by,
+            spots: []
+          };
+          resp.rows.forEach(x => {
+            let item = {
+              id: x.spot_id,
+              name: x.name,
+              tags: x.spots_tags,
+              address: x.address,
+              city: x.city,
+              state: x.state,
+              lat: x.lat,
+              lng: x.lng
+            };
+            list.spots.push(item);
+          });
+          res.status(200).json(list);
+        }
+      );
     } catch (error) {
       next(error);
     }
