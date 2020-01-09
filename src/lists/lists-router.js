@@ -2,6 +2,7 @@ const express = require('express');
 const ListsService = require('./lists-service');
 const { requireAuth } = require('../middleware/jwt-auth');
 const package = require('../fixtures');
+const AuthService = require('../auth/auth-service');
 
 const listsRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -78,7 +79,7 @@ listsRouter
       next(error);
     }
   })
-  .delete((req, res, next) => {
+  .delete(jsonBodyParser, (req, res, next) => {
     try {
       let db = req.app.get('db');
       ListsService.deleteListReference(
@@ -88,7 +89,7 @@ listsRouter
       ).then(
         res
           .status(202)
-          .json({ message: `Record ${req.params.list_id} was deleted` })
+          .json({ message: `Record ${req.params.list_id} was deleted, ${res}` })
       );
     } catch (error) {
       next(error);
