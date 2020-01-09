@@ -26,14 +26,16 @@ spotsRouter
         });
     try {
       let newSpot = {
-        name,
         address,
         city,
-        state,
         lat,
-        lon
+        lon,
+        name,
+        state
       };
-      SpotsService.insertSpot(req.app.get('db'), newSpot);
+      SpotsService.insertSpot(req.app.get('db'), newSpot).then(spot => {
+        res.status(200).json(spot);
+      });
     } catch (error) {
       next(error);
     }

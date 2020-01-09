@@ -2,9 +2,9 @@ const SpotsService = {
   getAllSpots(knex) {
     return knex.select('*').from('spots');
   },
-  insertSpot(knex, newSpots) {
+  insertSpot(knex, newSpot) {
     return knex
-      .insert(newSpots)
+      .insert(newSpot)
       .into('spots')
       .returning('*')
       .then(rows => rows[0]);
