@@ -20,20 +20,23 @@ listsRouter
   })
   .post(jsonBodyParser, (req, res, next) => {
     // need to add verification check to make sure that user owns said list
-    const { city, state, name, is_public } = req.body;
+    const { city, state, name, is_public, tags } = req.body;
     for (const field of ['name', 'city', 'state', 'is_public'])
-      if (!req.body[field] || !req.user.id)
+      if (!req.body[field])
         return res.status(400).json({
           error: `Missing '${field}' in request body`
         });
     try {
       const newList = {
+        name,
+        tags,
         city,
         state,
-        name,
         is_public
       };
-      ListsService.insertList(res.app.get('db'), newList);
+      ListsService.insertList(res.app.get('db'), newList).then(list => {
+        res.status(200).json(list);
+      });
     } catch (error) {
       next(error);
     }
