@@ -18,7 +18,7 @@ spotsRouter
     }
   })
   .post(jsonBodyParser, (req, res, next) => {
-    const { name, address, city, state, lat, lon } = req.body;
+    const { name, address, city, state, lat, lon, tags } = req.body;
     for (const field of ['name', 'city', 'state', 'lat', 'lon', 'address'])
       if (!req.body[field])
         return res.status(400).json({
@@ -29,6 +29,7 @@ spotsRouter
         address,
         city,
         lat,
+        tags,
         lon,
         name,
         state
@@ -55,7 +56,7 @@ spotsRouter
     }
   })
   .patch(jsonBodyParser, (req, res, next) => {
-    const { name, address, city, state, lat, lon, id } = req.body;
+    const { name, address, city, state, lat, lon, id, tags } = req.body;
     for (const field of ['name', 'city', 'state', 'lat', 'lon', 'address'])
       if (!req.body[field])
         return res.status(400).json({
@@ -67,6 +68,7 @@ spotsRouter
         address,
         city,
         state,
+        tags,
         lat,
         lon
       };
