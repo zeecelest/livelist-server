@@ -16,7 +16,7 @@ const SpotsService = {
       .where({ id })
       .first();
   },
-  deleteSpots(knex, id) {
+  deleteSpot(knex, id) {
     return knex('spots')
       .where({ id })
       .delete();

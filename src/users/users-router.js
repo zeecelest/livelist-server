@@ -65,7 +65,7 @@ userRouter.route('/lists/:id').get((req, res, next) => {
   try {
     UserService.returnAllListsByUserId(req.app.get('db'), req.params.id).then(
       lists => {
-        res.status(200).json(lists);
+        res.status(200).json(lists.rows);
       }
     );
   } catch (error) {
