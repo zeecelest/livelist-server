@@ -15,13 +15,18 @@ const UserService = {
       .first();
   },
   returnAllListsByUserId(db, id) {
-    return db
-      .select('lists_id')
-      .from('users_lists')
-      .where('user_id', id)
-      .join('lists')
-      .on('lists.id', '=', 'users_lists.list_id')
-      .returning('lists');
+    return db.raw(
+      `SELECT lists.id,
+      lists.name,
+      lists.tags,
+      lists.city,
+      lists.state,
+      lists.is_public
+      FROM users_lists RIGHT JOIN lists
+      ON users_lists.list_id = lists.id
+      WHERE users_lists.users_id = ${id}
+      `
+    );
   },
   insertUser(db, newUser) {
     return db

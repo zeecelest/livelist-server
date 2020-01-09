@@ -3,7 +3,7 @@ const SpotsService = require('./spots-service');
 const { requireAuth } = require('../middleware/jwt-auth');
 
 const spotsRouter = express.Router();
-//const jsonBodyParser = express.json();
+const jsonBodyParser = express.json();
 
 spotsRouter
   .use(requireAuth)
@@ -17,10 +17,10 @@ spotsRouter
       next(error);
     }
   })
-  .post((req, res, next) => {
+  .post(jsonBodyParser, (req, res, next) => {
     const { name, address, city, state, lat, lon } = req.body;
     for (const field of ['name', 'city', 'state', 'lat', 'lon', 'address'])
-      if (!req.body[field] || !req.user.id)
+      if (!req.body[field])
         return res.status(400).json({
           error: `Missing '${field}' in request body`
         });
@@ -48,6 +48,29 @@ spotsRouter
           res.status(200).json(spot);
         }
       );
+    } catch (error) {
+      next(error);
+    }
+  })
+  .patch(jsonBodyParser, (req, res, next) => {
+    const { name, address, city, state, lat, lon, id } = req.body;
+    for (const field of ['name', 'city', 'state', 'lat', 'lon', 'address'])
+      if (!req.body[field])
+        return res.status(400).json({
+          error: `Missing '${field}' in request body`
+        });
+    try {
+      let edittedSpot = {
+        name,
+        address,
+        city,
+        state,
+        lat,
+        lon
+      };
+      SpotsService.updateSpot(req.app.get('db'), id, edittedSpot).then(spot => {
+        res.status(200).json(spot);
+      });
     } catch (error) {
       next(error);
     }

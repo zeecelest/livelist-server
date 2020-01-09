@@ -21,7 +21,7 @@ const SpotsService = {
       .where({ id })
       .delete();
   },
-  updateSpots(knex, id, newSpotsField) {
+  updateSpot(knex, id, newSpotsField) {
     return knex('spots')
       .where({ id })
       .update(newSpotsField);
