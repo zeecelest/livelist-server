@@ -34,8 +34,7 @@ const ListService = {
       .then(rows => rows[0]);
   },
   getListById(knex, id) {
-    return knex
-      .raw(`
+    return knex.raw(`
         SELECT lists_spots.list_id,
                lists.name AS list_name,
                lists.tags AS list_tags,
@@ -58,7 +57,7 @@ const ListService = {
                JOIN users
                ON users_lists.users_id = users.id
                WHERE lists_spots.list_id = ${id};
-    `)
+    `);
   },
   deleteListReference(knex, list_id, user_id) {
     return knex('users_lists')
