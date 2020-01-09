@@ -18,8 +18,8 @@ spotsRouter
     }
   })
   .post(jsonBodyParser, (req, res, next) => {
-    const { name, address, city, state, lat, lon, tags } = req.body;
-    for (const field of ['name', 'city', 'state', 'lat', 'lon', 'address'])
+    const { list_id, name, address, city, state } = req.body;
+    for (const field of ['list_id', 'name', 'city', 'state', 'address'])
       if (!req.body[field])
         return res.status(400).json({
           error: `Missing '${field}' in request body`
