@@ -15,8 +15,9 @@ const UserService = {
       .first();
   },
   returnAllListsByUserId(db, id) {
-    return db.raw(
-      `SELECT lists.id,
+    return db
+      .raw(
+        `SELECT lists.id,
       lists.name,
       lists.tags,
       lists.city,
@@ -26,7 +27,8 @@ const UserService = {
       ON users_lists.list_id = lists.id
       WHERE users_lists.users_id = ${id}
       `
-    );
+      )
+      .then(item => item.rows);
   },
   insertUser(db, newUser) {
     return db
