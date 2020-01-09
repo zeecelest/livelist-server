@@ -70,9 +70,9 @@ const ListService = {
       .where({ id })
       .delete();
   },
-  updateList(knex, id, newListField) {
-    return knex('lists')
-      .where({ id })
+  updateListReference(knex, user_id, list_id, newListField) {
+    return knex('users_lists')
+      .where({ user_id, list_id })
       .update(newListField);
   }
 };
