@@ -93,8 +93,8 @@ listsRouter
       let db = req.app.get('db');
       ListsService.deleteListReference(
         db,
-        req.user.id,
         req.params.list_id,
+        req.user.id,
       ).then(data => {
         if (data == 0) {
           res.json({message: 'nothing to delete'});

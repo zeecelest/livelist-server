@@ -15,7 +15,7 @@ const ListService = {
                ON lists.id = liked_by.list_id
                WHERE is_public = true
                GROUP BY lists.id;
-        `
+        `,
       )
       .then(rows => rows);
   },
@@ -24,7 +24,7 @@ const ListService = {
     return knex
       .select('*')
       .from('lists')
-      .where({ is_public: true})
+      .where({is_public: true})
       .where('city', 'ilike', city);
   },
   insertList(knex, newList, users_id) {
@@ -34,19 +34,18 @@ const ListService = {
         .insert(newList)
         .returning('*')
         .then(resp => {
-          const list_id = resp[0].id
-          console.log(list_id, users_id)
+          const list_id = resp[0].id;
           return knex('users_lists')
             .transacting(trx)
             .insert({
               users_id: users_id,
-              list_id: list_id
+              list_id: list_id,
             })
             .then(res2 => {
-              return resp[0]
-            })
-        })
-    })
+              return resp[0];
+            });
+        });
+    });
   },
   getListById(knex, id) {
     return knex.raw(`
@@ -78,10 +77,13 @@ const ListService = {
     return knex.transaction(trx => {
       return knex('users_lists')
         .transacting(trx)
-        .where({list_id})
-        .where({users_id})
         .delete()
+        .where('users_id', '=', users_id)
+        .andWhere('list_id', '=', list_id)
         .then(res => {
+          if (res === 0){
+            return {message: "You dont have access"}
+          }
           return knex('lists_spots')
             .transacting(trx)
             .where({list_id})
@@ -91,25 +93,22 @@ const ListService = {
                 .transacting(trx)
                 .where('id', list_id)
                 .delete()
-                .then(res => res)
-            })
-        })
-    })
-    //    return knex('users_lists')
-    //      .where({ list_id, users_id })
-    //      .delete();
+                .then(res => res);
+            });
+        });
+    });
   },
   deleteList(knex, id) {
     // currently unused
     return knex('lists')
-      .where({ id })
+      .where({id})
       .delete();
   },
   updateListReference(knex, user_id, list_id, newListField) {
     return knex('users_lists')
-      .where({ user_id, list_id })
+      .where({user_id, list_id})
       .update(newListField);
-  }
+  },
 };
 
 module.exports = ListService;
