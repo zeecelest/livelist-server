@@ -19,13 +19,10 @@ const SpotsService = {
                 .transacting(trx)
                 .where('id', list_id)
                 .delete()
-                .then(res => res)
-            })
-        })
-    })
-    //    return knex('users_lists')
-    //      .where({ list_id, users_id })
-    //      .delete();
+                .then(res => res);
+            });
+        });
+    });
   },
   insertSpot(knex, newSpot, list_id) {
     return knex.transaction(trx => {
@@ -34,44 +31,38 @@ const SpotsService = {
         .insert(newSpot)
         .returning('*')
         .then(res => {
-          console.log(res)
           return knex('lists_spots')
             .transacting(trx)
             .insert({
               list_id: list_id,
-              spot_id: res[0].id
+              spot_id: res[0].id,
             })
             .returning('*')
             .then(res2 => {
               return {
                 list_id,
-                ...res[0]
-              }
-            })
-        })
-    })
-    //      .insert(newSpot)
-    //      .into('spots')
-    //      .returning('*')
-    //      .then(rows => rows[0]);
+                ...res[0],
+              };
+            });
+        });
+    });
   },
   getSpotById(knex, id) {
     return knex
       .from('spots')
       .select('*')
-      .where({ id })
+      .where({id})
       .first();
   },
   deleteSpot(knex, id) {
     return knex('spots')
-      .where({ id })
+      .where({id})
       .delete();
   },
   updateSpot(knex, id, newSpotsField) {
     return knex('spots')
-      .where({ id })
+      .where({id})
       .update(newSpotsField);
-  }
+  },
 };
-
 module.exports = SpotsService;
