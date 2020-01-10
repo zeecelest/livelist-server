@@ -17,7 +17,7 @@ const ListService = {
                GROUP BY lists.id;
         `,
       )
-      .then(rows => rows);
+      .then((rows) => rows)
   },
   getAllListsFromCity(knex, city) {
     // needs implementation
@@ -71,10 +71,10 @@ const ListService = {
                JOIN users
                ON users_lists.users_id = users.id
                WHERE lists_spots.list_id = ${id};
-    `);
+    `)
   },
   deleteListReference(knex, list_id, users_id) {
-    return knex.transaction(trx => {
+    return knex.transaction((trx) => {
       return knex('users_lists')
         .transacting(trx)
         .delete()
@@ -88,7 +88,7 @@ const ListService = {
             .transacting(trx)
             .where({list_id})
             .delete()
-            .then(res => {
+            .then((res) => {
               return knex('lists')
                 .transacting(trx)
                 .where('id', list_id)
@@ -111,4 +111,4 @@ const ListService = {
   },
 };
 
-module.exports = ListService;
+module.exports = ListService

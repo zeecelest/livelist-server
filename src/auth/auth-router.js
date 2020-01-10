@@ -44,9 +44,7 @@ authRouter
         name: dbUser.name
       };
       res.send({
-        authToken: AuthService.createJwt(sub, payload),
-        username: dbUser.username,
-        user_id: `${dbUser.id}`
+        authToken: AuthService.createJwt(sub, payload)
       });
     } catch (error) {
       next(error);
