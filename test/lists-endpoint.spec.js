@@ -51,27 +51,18 @@ describe('Lists Endpoint', function() {
     context(`Given a valid auth header`, () => {
       it(`responds with 200 and the lists`, () => {
         const validUser = helpers.makeUsersArray()[0];
-        const authString = helpers.makeAuthHeader(validUser);
-        console.log('Authorization', authString);
         return supertest(app)
           .get('/api/lists')
-          .set('Authorization', authString)
+          .set('Authorization', helpers.makeAuthHeader(validUser))
+          .expect(200);
+      });
+      it(`responds with 200 and the specified list`, () => {
+        const validUser = helpers.makeUsersArray()[0];
+        return supertest(app)
+          .get('/api/lists?list_id=1')
+          .set('Authorization', helpers.makeAuthHeader(validUser))
           .expect(200);
       });
     });
-
-    // context('Given there are lists in the database', () => {
-    //   beforeEach('insert lists', () =>
-    //     helpers.seedlistsTables(db, testUsers, testlists, testComments)
-    //   );
-    //   it('responds with 200 and all of the lists', () => {
-    //     const expectedlists = testlists.map((article) =>
-    //       helpers.makeExpectedArticle(testUsers, article, testComments)
-    //     );
-    //     return supertest(app)
-    //       .get('/api/lists')
-    //       .expect(200, expectedlists);
-    //   });
-    // });
   });
 });
