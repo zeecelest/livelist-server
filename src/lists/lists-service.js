@@ -19,6 +19,16 @@ const ListService = {
       )
       .then((rows) => rows)
   },
+  getAllListsFromUser(knex, id) {
+    return knex.raw(`
+      SELECT *
+      FROM users_lists
+      JOIN lists
+      ON list_id = lists.id
+      WHERE users_id = ${id};
+    `)
+      .then(resp => resp.rows);
+  },
   getAllListsFromCity(knex, city) {
     // needs implementation
     return knex

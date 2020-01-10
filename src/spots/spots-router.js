@@ -117,11 +117,12 @@ spotsRouter
   })
   .delete((req, res, next) => {
     try {
-      SpotsService.deleteSpot(req.app.get('db'), req.params.spot_id).then(
-        () => {
-          res.status(204)
-        }
-      )
+      return SpotsService.deleteSpotReference(
+        req.app.get('db'),
+        req.params.spot_id,
+      ).then(response => {
+        return res.status(200).json({message: response});
+      });
     } catch (error) {
       next(error)
     }
