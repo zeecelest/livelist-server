@@ -24,7 +24,8 @@ const ListService = {
     return knex
       .select('*')
       .from('lists')
-      .where({ is_public: true, city });
+      .where({ is_public: true})
+      .where('city', 'ilike', city);
   },
   insertList(knex, newList) {
     return knex
