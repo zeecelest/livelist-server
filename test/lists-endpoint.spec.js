@@ -16,7 +16,7 @@ describe('Lists Endpoint', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db));
   beforeEach('insert users, languages and words', () => {
-    return helpers.seedUsers(db, helpers.returnUsersArray());
+    return helpers.seedUsers(db, helpers.makeUsersArray());
   });
 
   describe(`GET /api/lists`, () => {
