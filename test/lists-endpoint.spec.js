@@ -15,6 +15,9 @@ describe('Lists Endpoint', function() {
   before('cleanup', () => helpers.cleanTables(db));
 
   afterEach('cleanup', () => helpers.cleanTables(db));
+  beforeEach('insert users, languages and words', () => {
+    return helpers.seedUsers(db, helpers.returnUsersArray());
+  });
 
   describe(`GET /api/lists`, () => {
     context(`Given no auth header`, () => {

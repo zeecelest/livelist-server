@@ -192,6 +192,14 @@ function seedListsTable(db, lists) {
   });
 }
 
+function seedUsersSpotsLists(db) {
+  return db.transaction(async (trx) => {
+    await seedUsers(makeUsersArray);
+    await seedSpotsTable(makeSpotsData);
+    await seedListsTable(makeListsData);
+  });
+}
+
 /**
  * seed the databases with words and update sequence counter
  * @param {knex instance} db
@@ -210,5 +218,6 @@ module.exports = {
   cleanTables,
   seedListsTable,
   seedSpotsTable,
+  seedUsersSpotsLists,
   seedUsers
 };
