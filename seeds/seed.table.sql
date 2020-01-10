@@ -61,7 +61,7 @@ VALUES
 INSERT INTO "users_lists" ("users_id", "list_id")
 VALUES
     (1,1),
-    (2,1),
+    (2,2),
     (1,3);
 
 -- liked_by table
