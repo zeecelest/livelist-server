@@ -27,11 +27,13 @@ describe('User Endpoints', function() {
 
     const requiredFields = ['username', 'password', 'name'];
 
-    requiredFields.forEach(field => {
+    requiredFields.forEach((field) => {
       const registerAttemptBody = {
         username: 'test username',
         password: 'test password',
-        name: 'test name'
+        name: 'test name',
+        city: 'Los_Angeles',
+        state: 'CA'
       };
 
       it(`responds with 400 required error when '${field}' is missing`, () => {
@@ -49,7 +51,9 @@ describe('User Endpoints', function() {
       const userShortPassword = {
         username: 'test username',
         password: '1234567',
-        name: 'test name'
+        name: 'test name',
+        city: 'Los_Angeles',
+        state: 'CA'
       };
       return supertest(app)
         .post('/api/user')
@@ -61,7 +65,9 @@ describe('User Endpoints', function() {
       const userLongPassword = {
         username: 'test username',
         password: '*'.repeat(73),
-        name: 'test name'
+        name: 'test name',
+        city: 'Los_Angeles',
+        state: 'CA'
       };
       return supertest(app)
         .post('/api/user')
@@ -73,7 +79,9 @@ describe('User Endpoints', function() {
       const userPasswordStartsSpaces = {
         username: 'test username',
         password: ' 1Aa!2Bb@',
-        name: 'test name'
+        name: 'test name',
+        city: 'Los_Angeles',
+        state: 'CA'
       };
       return supertest(app)
         .post('/api/user')
@@ -87,7 +95,9 @@ describe('User Endpoints', function() {
       const userPasswordEndsSpaces = {
         username: 'test username',
         password: '1Aa!2Bb@ ',
-        name: 'test name'
+        name: 'test name',
+        city: 'Los_Angeles',
+        state: 'CA'
       };
       return supertest(app)
         .post('/api/user')
@@ -101,7 +111,9 @@ describe('User Endpoints', function() {
       const userPasswordNotComplex = {
         username: 'test username',
         password: '11AAaabb',
-        name: 'test name'
+        name: 'test name',
+        city: 'Los_Angeles',
+        state: 'CA'
       };
       return supertest(app)
         .post('/api/user')
@@ -115,7 +127,9 @@ describe('User Endpoints', function() {
       const duplicateUser = {
         username: testUser.username,
         password: '11AAaa!!',
-        name: 'test name'
+        name: 'test name',
+        city: 'Los_Angeles',
+        state: 'CA'
       };
       return supertest(app)
         .post('/api/user')
@@ -128,13 +142,15 @@ describe('User Endpoints', function() {
         const newUser = {
           username: 'test username',
           password: '11AAaa!!',
-          name: 'test name'
+          name: 'test name',
+          city: 'Los_Angeles',
+          state: 'CA'
         };
         return supertest(app)
           .post('/api/user')
           .send(newUser)
           .expect(201)
-          .expect(res => {
+          .expect((res) => {
             expect(res.body).to.have.property('id');
             expect(res.body.username).to.eql(newUser.username);
             expect(res.body.name).to.eql(newUser.name);
@@ -147,24 +163,26 @@ describe('User Endpoints', function() {
         const newUser = {
           username: 'test username',
           password: '11AAaa!!',
-          name: 'test name'
+          name: 'test name',
+          city: 'Los_Angeles',
+          state: 'CA'
         };
         return supertest(app)
           .post('/api/user')
           .send(newUser)
-          .expect(res =>
+          .expect((res) =>
             db
               .from('users')
               .select('*')
               .where({ id: res.body.id })
               .first()
-              .then(row => {
+              .then((row) => {
                 expect(row.username).to.eql(newUser.username);
                 expect(row.name).to.eql(newUser.name);
 
                 return bcrypt.compare(newUser.password, row.password);
               })
-              .then(compareMatch => {
+              .then((compareMatch) => {
                 expect(compareMatch).to.be.true;
               })
           );

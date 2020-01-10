@@ -105,6 +105,9 @@ function makeSpotsData() {
   ];
 }
 
+function makeUsersListData() {
+  return [];
+}
 /**
  * generate fixtures of languages and words for a given user
  * @param {object} user - contains `id` property
@@ -134,7 +137,11 @@ function cleanTables(db) {
     trx
       .raw(
         `TRUNCATE
-        "users"`
+        "users",
+        "users_lists",
+        "liked_by",
+        "visited_by" 
+        `
       )
       .then(() =>
         Promise.all([
