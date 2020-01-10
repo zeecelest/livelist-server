@@ -23,13 +23,84 @@ function makeUsersArray() {
       id: 1,
       username: 'test-user-1',
       name: 'Test user 1',
-      password: 'password'
+      password: 'password',
+      state: 'CA',
+      city: 'Los_Angeles'
     },
     {
       id: 2,
       username: 'test-user-2',
       name: 'Test user 2',
-      password: 'password'
+      password: 'password',
+      state: 'CA',
+      city: 'San_Francisco'
+    }
+  ];
+}
+
+function makeListsData() {
+  return [
+    {
+      liked: '0',
+      id: 1,
+      name: 'happy unicorn time',
+      tags: '#fuck',
+      city: 'Los Angeles',
+      state: 'CA',
+      is_public: true
+    },
+    {
+      liked: '2',
+      id: 2,
+      name: 'Saturday fun night',
+      tags: '#nightout',
+      city: 'Los Angeles',
+      state: 'CA',
+      is_public: true
+    },
+    {
+      liked: '0',
+      id: 3,
+      name: 'Weekday Routine',
+      tags: '#nightout',
+      city: 'NYC',
+      state: 'NY',
+      is_public: true
+    }
+  ];
+}
+
+function makeSpotsData() {
+  return [
+    {
+      id: 1,
+      name: 'Pinks Hot Dogs',
+      tags: '#restaurant',
+      address: '709 N La Brea Ave, 90038',
+      city: 'CA',
+      state: 'Los Angeles',
+      lat: '5.032',
+      lon: '20.6542'
+    },
+    {
+      id: 2,
+      name: 'Giggles Night Club',
+      tags: '#nightout',
+      address: '215 N Brand Blvd, 91203',
+      city: 'CA',
+      state: 'Glendale',
+      lat: '33.0324',
+      lon: '18.2664'
+    },
+    {
+      id: 3,
+      name: 'test',
+      tags: null,
+      address: '123 test lane',
+      city: 'test city',
+      state: 'test state',
+      lat: '123.423423',
+      lon: '454.123'
     }
   ];
 }
@@ -59,7 +130,7 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
  * @returns {Promise} - when tables are cleared
  */
 function cleanTables(db) {
-  return db.transaction(trx =>
+  return db.transaction((trx) =>
     trx
       .raw(
         `TRUNCATE
@@ -81,12 +152,32 @@ function cleanTables(db) {
  * @returns {Promise} - when users table seeded
  */
 function seedUsers(db, users) {
-  const preppedUsers = users.map(user => ({
+  const preppedUsers = users.map((user) => ({
     ...user,
     password: bcrypt.hashSync(user.password, 1)
   }));
-  return db.transaction(async trx => {
+  return db.transaction(async (trx) => {
     await trx.into('users').insert(preppedUsers);
+
+    await trx.raw(`SELECT setval('users_id_seq', ?)`, [
+      users[users.length - 1].id
+    ]);
+  });
+}
+
+function seedSpotsTable(db, spots) {
+  return db.transaction(async (trx) => {
+    await trx.into('spots').insert(spots);
+
+    await trx.raw(`SELECT setval('users_id_seq', ?)`, [
+      users[users.length - 1].id
+    ]);
+  });
+}
+
+function seedListsTable(db, lists) {
+  return db.transaction(async (trx) => {
+    await trx.into('lists').insert(lists);
 
     await trx.raw(`SELECT setval('users_id_seq', ?)`, [
       users[users.length - 1].id
@@ -107,6 +198,10 @@ module.exports = {
   makeKnexInstance,
   makeUsersArray,
   makeAuthHeader,
+  makeListsData,
+  makeSpotsData,
   cleanTables,
+  seedListsTable,
+  seedSpotsTable,
   seedUsers
 };
