@@ -38,19 +38,32 @@ listsRouter
         state,
         is_public,
       };
-      const user_id = req.user.id
-      console.log(user_id)
-      return ListsService.insertList(
-        res.app.get('db'),
-        newList,
-        user_id,
-      ).then(list => {
-        res.status(200).json(list);
-      });
+      const user_id = req.user.id;
+      console.log(user_id);
+      return ListsService.insertList(res.app.get('db'), newList, user_id).then(
+        list => {
+          res.status(200).json(list);
+        },
+      );
     } catch (error) {
       next(error);
     }
   });
+listsRouter
+  .use(requireAuth)
+  .route('/user')
+  .get((req, res, next) => {
+    return ListsService.getAllListsFromUser(req.app.get('db'), req.user.id)
+      .then(resp => {
+        if(resp.length === 0){
+          return res.json({message: 'there are no lists to send'})
+        }
+        else {
+          return res.status(200).json(resp)
+        }
+      })
+  });
+
 listsRouter
   .use(requireAuth)
   .route('/:list_id')
