@@ -1,11 +1,10 @@
 const express = require('express');
 const SpotsService = require('./spots-service');
-const { requireAuth } = require('../middleware/jwt-auth');
-const https = require('https')
+const {requireAuth} = require('../middleware/jwt-auth');
+const https = require('https');
 const spotsRouter = express.Router();
 const jsonBodyParser = express.json();
-const API_KEY = process.env.API_GEO_KEY
-
+const API_KEY = process.env.API_GEO_KEY;
 
 spotsRouter
   .use(requireAuth)
@@ -19,35 +18,41 @@ spotsRouter
       next(error);
     }
   })
-  .post (jsonBodyParser, (req, res, next) => {
-    let { list_id, name, address, city, state, tags } = req.body;
+  .post(jsonBodyParser, (req, res, next) => {
+    let {list_id, name, address, city, state, tags} = req.body;
     address = address.replace(/ /g, '+');
     city = city.replace(/ /g, '+');
-    https.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${address},+${city},+${state}&key=${API_KEY}`, ress => {
-      ress.setEncoding("utf8");
-      let body = ''
-      ress.on("data", data => {
-        body += data
-      })
-      ress.on("end", () => {
-        body = JSON.parse(body)
-        //        console.log(body.results[0].geometry.location)
-        let newSpot = {
-          address,
-          city,
-          tags,
-          lat: body.results[0].geometry.location.lat,
-          lon: body.results[0].geometry.location.lng,
-          name,
-          state
-        };
-        return SpotsService.insertSpot(req.app.get('db'), newSpot, list_id)
-          .then(spot => {
-            console.log(spot)
-            return res.status(200).json(spot)
-          })
-      })
-    })
+    https.get(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${address},+${city},+${state}&key=${API_KEY}`,
+      ress => {
+        ress.setEncoding('utf8');
+        let body = '';
+        ress.on('data', data => {
+          body += data;
+        });
+        ress.on('end', () => {
+          body = JSON.parse(body);
+          //        console.log(body.results[0].geometry.location)
+          let newSpot = {
+            address,
+            city,
+            tags,
+            lat: body.results[0].geometry.location.lat,
+            lon: body.results[0].geometry.location.lng,
+            name,
+            state,
+          };
+          return SpotsService.insertSpot(
+            req.app.get('db'),
+            newSpot,
+            list_id,
+          ).then(spot => {
+            console.log(spot);
+            return res.status(200).json(spot);
+          });
+        });
+      },
+    );
     //    for (const field of ['list_id', 'name', 'city', 'state', 'address'])
     //      if (!req.body[field])
     //        return res.status(400).json({
@@ -78,18 +83,18 @@ spotsRouter
       SpotsService.getSpotById(req.app.get('db'), req.params.spot_id).then(
         spot => {
           res.status(200).json(spot);
-        }
+        },
       );
     } catch (error) {
       next(error);
     }
   })
   .patch(jsonBodyParser, (req, res, next) => {
-    const { name, address, city, state, lat, lon, id, tags } = req.body;
+    const {name, address, city, state, lat, lon, id, tags} = req.body;
     for (const field of ['name', 'city', 'state', 'lat', 'lon', 'address'])
       if (!req.body[field])
         return res.status(400).json({
-          error: `Missing '${field}' in request body`
+          error: `Missing '${field}' in request body`,
         });
     try {
       let edittedSpot = {
@@ -99,7 +104,7 @@ spotsRouter
         state,
         tags,
         lat,
-        lon
+        lon,
       };
       SpotsService.updateSpot(req.app.get('db'), id, edittedSpot).then(spot => {
         res.status(200).json(spot);
@@ -113,7 +118,7 @@ spotsRouter
       SpotsService.deleteSpot(req.app.get('db'), req.params.spot_id).then(
         () => {
           res.status(204);
-        }
+        },
       );
     } catch (error) {
       next(error);

@@ -13,7 +13,11 @@ listsRouter
   .get((req, res, next) => {
     try {
       ListsService.getAllLists(req.app.get('db')).then(lists => {
-        res.status(200).json(lists.rows);
+        if (lists.length === 0) {
+          res.status(200).json({message: 'There are no lists... thats odd.'});
+        } else {
+          res.status(200).json(lists.rows);
+        }
       });
     } catch (error) {
       next(error);
@@ -34,7 +38,13 @@ listsRouter
         state,
         is_public,
       };
-      ListsService.insertList(res.app.get('db'), newList).then(list => {
+      const user_id = req.user.id
+      console.log(user_id)
+      return ListsService.insertList(
+        res.app.get('db'),
+        newList,
+        user_id,
+      ).then(list => {
         res.status(200).json(list);
       });
     } catch (error) {
@@ -84,15 +94,14 @@ listsRouter
       ListsService.deleteListReference(
         db,
         req.user.id,
-        req.params.list_id)
-        .then(data => {
-          if(data == 0){
-            res.json({message: "nothing to delete"})
-          }
-          else{
-            res.json(data)
-          }
-        })
+        req.params.list_id,
+      ).then(data => {
+        if (data == 0) {
+          res.json({message: 'nothing to delete'});
+        } else {
+          res.json(data);
+        }
+      });
     } catch (error) {
       next(error);
     }
@@ -119,7 +128,13 @@ listsRouter
     let city = req.params.city.split('_').join(' ');
     try {
       ListsService.getAllListsFromCity(req.app.get('db'), city).then(lists => {
-        return res.status(200).json(lists);
+        if (lists.length === 0) {
+          return res
+            .status(200)
+            .json({message: `There are no lists from the city "${city}"`});
+        } else {
+          return res.status(200).json(lists);
+        }
       });
     } catch (error) {
       next(error);

@@ -27,12 +27,26 @@ const ListService = {
       .where({ is_public: true})
       .where('city', 'ilike', city);
   },
-  insertList(knex, newList) {
-    return knex
-      .insert(newList)
-      .into('lists')
-      .returning('*')
-      .then(rows => rows[0]);
+  insertList(knex, newList, users_id) {
+    return knex.transaction(trx => {
+      return knex('lists')
+        .transacting(trx)
+        .insert(newList)
+        .returning('*')
+        .then(resp => {
+          const list_id = resp[0].id
+          console.log(list_id, users_id)
+          return knex('users_lists')
+            .transacting(trx)
+            .insert({
+              users_id: users_id,
+              list_id: list_id
+            })
+            .then(res2 => {
+              return resp[0]
+            })
+        })
+    })
   },
   getListById(knex, id) {
     return knex.raw(`
