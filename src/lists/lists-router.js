@@ -1,6 +1,6 @@
 const express = require('express');
 const ListsService = require('./lists-service');
-const { requireAuth } = require('../middleware/jwt-auth');
+const {requireAuth} = require('../middleware/jwt-auth');
 const package = require('../fixtures');
 const AuthService = require('../auth/auth-service');
 
@@ -20,11 +20,11 @@ listsRouter
     }
   })
   .post(jsonBodyParser, (req, res, next) => {
-    const { city, state, name, is_public, tags } = req.body;
+    const {city, state, name, is_public, tags} = req.body;
     for (const field of ['name', 'city', 'state', 'is_public'])
       if (!req.body[field])
         return res.status(400).json({
-          error: `Missing '${field}' in request body`
+          error: `Missing '${field}' in request body`,
         });
     try {
       const newList = {
@@ -32,7 +32,7 @@ listsRouter
         tags,
         city,
         state,
-        is_public
+        is_public,
       };
       ListsService.insertList(res.app.get('db'), newList).then(list => {
         res.status(200).json(list);
@@ -56,7 +56,7 @@ listsRouter
             list_id: resp.rows[0].list_id,
             tags: resp.rows[0].list_tags,
             created_by: resp.rows[0].created_by,
-            spots: []
+            spots: [],
           };
           resp.rows.forEach(x => {
             let item = {
@@ -67,12 +67,12 @@ listsRouter
               city: x.city,
               state: x.state,
               lat: x.lat,
-              lng: x.lng
+              lng: x.lng,
             };
             list.spots.push(item);
           });
           res.status(200).json(list);
-        }
+        },
       );
     } catch (error) {
       next(error);
@@ -84,12 +84,15 @@ listsRouter
       ListsService.deleteListReference(
         db,
         req.user.id,
-        req.params.list_id
-      ).then(
-        res
-          .status(202)
-          .json({ message: `Record ${req.params.list_id} was deleted, ${res}` })
-      );
+        req.params.list_id)
+        .then(data => {
+          if(data == 0){
+            res.json({message: "nothing to delete"})
+          }
+          else{
+            res.json(data)
+          }
+        })
     } catch (error) {
       next(error);
     }
@@ -100,7 +103,7 @@ listsRouter
       ListsService.updateListReference(
         req.app.get('db'),
         req.user.id,
-        req.body.editList
+        req.body.editList,
       ).then(list => {
         res.status(200).json(list);
       });
@@ -113,11 +116,11 @@ listsRouter
   .use(requireAuth)
   .route('/city/:city')
   .get((req, res, next) => {
+    let city = req.params.city.split('_').join(' ');
     try {
-      ListsService.getAllListsFromCity(
-        req.app.get('db'),
-        req.params.city
-      ).then(lists => res.status(200).json(lists));
+      ListsService.getAllListsFromCity(req.app.get('db'), city).then(lists => {
+        return res.status(200).json(lists);
+      });
     } catch (error) {
       next(error);
     }
