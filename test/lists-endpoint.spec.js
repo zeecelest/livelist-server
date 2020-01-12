@@ -16,7 +16,7 @@ describe('Lists Endpoint', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db));
   beforeEach('insert users, languages and words', () => {
-    return helpers.seedUsers(db, helpers.makeUsersArray());
+    return helpers.seedUsersSpotsLists(db);
   });
 
   describe(`GET /api/lists`, () => {
@@ -66,12 +66,12 @@ describe('Lists Endpoint', function() {
     });
   });
 
-  describe(`PATCH /api/lists`, () => {
+  describe(`PATCH /api/lists/:id`, () => {
     context(`Given a valid auth header`, () => {
       it(`responds with 200 and the specified list`, () => {
         const validUser = helpers.makeUsersArray()[0];
         return supertest(app)
-          .patch('/api/lists/1')
+          .patch('/api/lists?list_id=1')
           .set('Authorization', helpers.makeAuthHeader(validUser))
           .expect(200);
       });
