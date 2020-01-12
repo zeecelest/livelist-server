@@ -12,8 +12,12 @@ listsRouter
   .route('/')
   .get((req, res, next) => {
     try {
-      ListsService.getAllLists(req.app.get('db')).then((lists) => {
-        res.status(200).json(lists.rows);
+      ListsService.getAllLists(req.app.get('db')).then(lists => {
+        if (lists.length === 0) {
+          res.status(200).json({message: 'There are no lists... thats odd.'});
+        } else {
+          res.status(200).json(lists.rows);
+        }
       });
     } catch (error) {
       next(error);
@@ -34,13 +38,32 @@ listsRouter
         state,
         is_public
       };
-      ListsService.insertList(res.app.get('db'), newList).then((list) => {
-        res.status(200).json(list);
-      });
+      const user_id = req.user.id;
+      console.log(user_id);
+      return ListsService.insertList(res.app.get('db'), newList, user_id).then(
+        list => {
+          res.status(200).json(list);
+        },
+      );
     } catch (error) {
       next(error);
     }
   });
+listsRouter
+  .use(requireAuth)
+  .route('/user')
+  .get((req, res, next) => {
+    return ListsService.getAllListsFromUser(req.app.get('db'), req.user.id)
+      .then(resp => {
+        if(resp.length === 0){
+          return res.json({message: 'there are no lists to send'})
+        }
+        else {
+          return res.status(200).json(resp)
+        }
+      })
+  });
+
 listsRouter
   .use(requireAuth)
   .route('/:list_id')
@@ -83,11 +106,18 @@ listsRouter
       let db = req.app.get('db');
       ListsService.deleteListReference(
         db,
+        req.params.list_id,
         req.user.id,
+<<<<<<< HEAD
         req.params.list_id
       ).then((data) => {
         if (data == 0) {
           res.json({ message: 'nothing to delete' });
+=======
+      ).then(data => {
+        if (data == 0) {
+          res.json({message: 'nothing to delete'});
+>>>>>>> d2ad33ac43e1135648a458cab6e7e66be0aff1d5
         } else {
           res.json(data);
         }
@@ -130,11 +160,15 @@ listsRouter
   .get((req, res, next) => {
     let city = req.params.city.split('_').join(' ');
     try {
-      ListsService.getAllListsFromCity(req.app.get('db'), city).then(
-        (lists) => {
+      ListsService.getAllListsFromCity(req.app.get('db'), city).then(lists => {
+        if (lists.length === 0) {
+          return res
+            .status(200)
+            .json({message: `There are no lists from the city "${city}"`});
+        } else {
           return res.status(200).json(lists);
         }
-      );
+      });
     } catch (error) {
       next(error);
     }
