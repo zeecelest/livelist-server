@@ -65,4 +65,16 @@ describe('Lists Endpoint', function() {
       });
     });
   });
+
+  describe(`PATCH /api/lists`, () => {
+    context(`Given a valid auth header`, () => {
+      it(`responds with 200 and the specified list`, () => {
+        const validUser = helpers.makeUsersArray()[0];
+        return supertest(app)
+          .patch('/api/lists/1')
+          .set('Authorization', helpers.makeAuthHeader(validUser))
+          .expect(200);
+      });
+    });
+  });
 });
