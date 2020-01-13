@@ -93,6 +93,7 @@ listsRouter
             };
             list.spots.push(item);
           });
+          console.log(list);
           res.status(200).json(list);
         }
       );
