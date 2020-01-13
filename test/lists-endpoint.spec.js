@@ -59,23 +59,37 @@ describe('Lists Endpoint', function() {
       });
       it(`responds with 200 and the specified list`, () => {
         const validUser = helpers.makeUsersArray()[0];
-        return supertest(app)
-          .get('/api/lists/1')
-          .set('Authorization', helpers.makeAuthHeader(validUser))
-          .expect(200, listOne);
+        setTimeout(() => {
+          return supertest(app)
+            .get('/api/lists/1')
+            .set('Authorization', helpers.makeAuthHeader(validUser))
+            .expect(200, listOne);
+        }, 2000);
       });
     });
   });
-
   // describe(`PATCH /api/lists?list_id=X`, () => {
   //   context(`Given a valid auth header`, () => {
-  //     it(`responds with 200 and the specified list`, () => {
+  //     it(`responds with 400 and the missing key`, () => {
+  //       let keys = ['city', 'state', 'name', 'is_public', 'tags'];
+  //       let reqObj = {
+  //         state:'CA',
+  //         city:'Los_Angeles',
+  //         tags:'#awesome',
+  //         name:'I made and edit on this name',
+  //         is_public: true
+  //       }
+  //       for(let key in keys) {
   //       const validUser = helpers.makeUsersArray()[0];
-  //       return supertest(app)
-  //         .patch('/api/lists?list_id=1')
-  //         .set('Authorization', helpers.makeAuthHeader(validUser))
-  //         .expect(200);
+  //       setTimeout(() => {
+  //         return supertest(app)
+  //           .patch('/api/lists/1')
+  //           .set('Authorization', helpers.makeAuthHeader(validUser))
+  //           .expect(200);
+  //       }, 2000);
   //     });
+  //       }
+
   //   });
   // });
 });
