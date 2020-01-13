@@ -68,30 +68,33 @@ describe('Lists Endpoint', function() {
       });
     });
   });
-  // describe(`PATCH /api/lists?list_id=X`, () => {
-  //   context(`Given a valid auth header`, () => {
-  //     it(`responds with 400 and the missing key`, () => {
-  //       let keys = ['city', 'state', 'name', 'is_public', 'tags'];
-  //       let reqObj = {
-  //         state:'CA',
-  //         city:'Los_Angeles',
-  //         tags:'#awesome',
-  //         name:'I made and edit on this name',
-  //         is_public: true
-  //       }
-  //       for(let key in keys) {
-  //       const validUser = helpers.makeUsersArray()[0];
-  //       setTimeout(() => {
-  //         return supertest(app)
-  //           .patch('/api/lists/1')
-  //           .set('Authorization', helpers.makeAuthHeader(validUser))
-  //           .expect(200);
-  //       }, 2000);
-  //     });
-  //       }
-
-  //   });
-  // });
+  describe(`PATCH /api/lists?list_id=X`, () => {
+    context(`Given a valid auth header`, () => {
+      it(`responds with 400 and the missing key`, () => {
+        let keys = ['city', 'state', 'name', 'is_public', 'tags'];
+        let reqObj = {
+          state: 'CA',
+          city: 'Los_Angeles',
+          tags: '#awesome',
+          name: 'I made and edit on this name',
+          is_public: true
+        };
+        for (let i = 0; i < keys.length; i++) {
+          console.log(keys[i], 'HEY FUCKER HOWS IT GOIN');
+          delete reqObj.keys[i];
+          const validUser = helpers.makeUsersArray()[0];
+          //setTimeout(() => {
+          return supertest(app)
+            .patch('/api/lists/1')
+            .send({ reqObj })
+            .set('Content-Type', 'application/json')
+            .set('Authorization', helpers.makeAuthHeader(validUser))
+            .expect(400, { error: `Missing key ${keys[i]} in request body` });
+          // }, 500);
+        }
+      });
+    });
+  });
 });
 
 let listOne = {
