@@ -4,6 +4,10 @@ const helpers = require('./test-helpers');
 
 describe('Lists Endpoint', function() {
   let db;
+  const validUser = helpers.makeUsersArray()[0];
+  const invalidSecret = 'bad-secret';
+  const bearerToken = helpers.makeAuthHeader(validUser);
+  const invalidUser = { username: 'fakeyfakey', password: 'dookeydookey' };
 
   before('make knex instance', () => {
     db = helpers.makeKnexInstance();
@@ -30,8 +34,6 @@ describe('Lists Endpoint', function() {
     });
     context(`Given an invalid auth header`, () => {
       it(`responds 401 'Unauthorized request' when invalid JWT secret`, () => {
-        const validUser = helpers.makeUsersArray()[0];
-        const invalidSecret = 'bad-secret';
         return supertest(app)
           .get('/api/lists')
           .set(
@@ -41,7 +43,6 @@ describe('Lists Endpoint', function() {
           .expect(401, { error: `Unauthorized request` });
       });
       it(`responds 401 'Unauthorized request' when invalid sub in payload`, () => {
-        const invalidUser = { username: 'user-not-existy', id: 1 };
         return supertest(app)
           .get('/api/lists')
           .set('Authorization', helpers.makeAuthHeader(invalidUser))
@@ -51,18 +52,16 @@ describe('Lists Endpoint', function() {
 
     context(`Given a valid auth header`, () => {
       it(`responds with 200 and the lists`, () => {
-        const validUser = helpers.makeUsersArray()[0];
         return supertest(app)
           .get('/api/lists')
-          .set('Authorization', helpers.makeAuthHeader(validUser))
+          .set('Authorization', bearerToken)
           .expect(200);
       });
       it(`responds with 200 and the specified list`, () => {
-        const validUser = helpers.makeUsersArray()[0];
         setTimeout(() => {
           return supertest(app)
             .get('/api/lists/1')
-            .set('Authorization', helpers.makeAuthHeader(validUser))
+            .set('Authorization', bearerToken)
             .expect(200, listOne);
         }, 2000);
       });
@@ -82,12 +81,11 @@ describe('Lists Endpoint', function() {
             is_public: true
           };
           delete reqObj[keys[i]];
-          const validUser = helpers.makeUsersArray()[0];
           return supertest(app)
             .post('/api/lists')
             .send(reqObj)
             .set('Content-Type', 'application/json')
-            .set('Authorization', helpers.makeAuthHeader(validUser))
+            .set('Authorization', bearerToken)
             .expect(400, { error: `Missing '${keys[i]}' in request body` });
         });
       }
@@ -107,12 +105,11 @@ describe('Lists Endpoint', function() {
             is_public: true
           };
           delete reqObj[keys[i]];
-          const validUser = helpers.makeUsersArray()[0];
           return supertest(app)
             .patch('/api/lists/1')
             .send(reqObj)
             .set('Content-Type', 'application/json')
-            .set('Authorization', helpers.makeAuthHeader(validUser))
+            .set('Authorization', bearerToken)
             .expect(400, { error: `Missing '${keys[i]}' in request body` });
         });
       }
