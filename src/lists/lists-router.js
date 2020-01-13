@@ -39,7 +39,7 @@ listsRouter
         is_public
       };
       const user_id = req.user.id;
-      console.log(user_id);
+      console.log('user_is', user_id);
       return ListsService.insertList(res.app.get('db'), newList, user_id).then(
         (list) => {
           res.status(200).json(list);
@@ -71,29 +71,40 @@ listsRouter
   .get((req, res, next) => {
     let list = {};
     try {
-      ListsService.getListById(req.app.get('db'), req.params.list_id).then(
-        (resp) => {
-          list = {
-            list_name: resp.rows[0].list_name,
-            list_id: resp.rows[0].list_id,
-            tags: resp.rows[0].list_tags,
-            created_by: resp.rows[0].created_by,
-            spots: []
-          };
-          resp.rows.forEach((x) => {
-            let item = {
-              id: x.spot_id,
-              name: x.name,
-              tags: x.spots_tags,
-              address: x.address,
-              city: x.city,
-              state: x.state,
-              lat: x.lat,
-              lng: x.lng
+      return ListsService.getListById(req.app.get('db'), req.params.list_id).then(
+        resp => {
+        console.log('THING', resp)
+          if(resp.rows.length !== 0 ){
+            list = {
+              list_name: resp.rows[0].list_name,
+              list_id: resp.rows[0].list_id,
+              tags: resp.rows[0].list_tags,
+              created_by: resp.rows[0].created_by,
+              spots: [],
             };
-            list.spots.push(item);
-          });
-          console.log(list);
+            resp.rows.forEach(x => {
+              let item = {
+                id: x.spot_id,
+                name: x.name,
+                tags: x.spots_tags,
+                address: x.address,
+                city: x.city,
+                state: x.state,
+                lat: x.lat,
+                lng: x.lng,
+              };
+              list.spots.push(item);
+            });
+          }
+          else {
+            list = {
+                list_name: 'none',
+                list_id: 0,
+                tags: 'none',
+                created_by: 'none',
+                spots: [],
+            };
+          }
           res.status(200).json(list);
         }
       );

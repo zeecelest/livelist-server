@@ -11,7 +11,7 @@ const spotsRouter = require('./spots/spots-router');
 const app = express();
 
 app.use(
-  morgan(NODE_ENV === 'production' ? 'tiny' : 'common', {
+  morgan(NODE_ENV === 'production' ? 'common' : 'common', {
     skip: () => NODE_ENV === 'test'
   })
 );
