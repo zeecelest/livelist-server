@@ -41,7 +41,6 @@ function makeUsersArray() {
 function makeListsData() {
   return [
     {
-      liked: '0',
       id: 1,
       name: 'happy unicorn time',
       tags: '#fuck',
@@ -50,16 +49,14 @@ function makeListsData() {
       is_public: true
     },
     {
-      liked: '2',
       id: 2,
       name: 'Saturday fun night',
-      tags: '#nightout',
-      city: 'Los Angeles',
+      tags: '#nightoutyolo',
+      city: 'Los Angeles - IE',
       state: 'CA',
       is_public: true
     },
     {
-      liked: '0',
       id: 3,
       name: 'Weekday Routine',
       tags: '#nightout',
@@ -73,31 +70,31 @@ function makeListsData() {
 function makeSpotsData() {
   return [
     {
-      id: 1,
+      id: 2,
       name: 'Pinks Hot Dogs',
       tags: '#restaurant',
       address: '709 N La Brea Ave, 90038',
-      city: 'CA',
-      state: 'Los Angeles',
+      city: 'Los Angeles',
+      state: 'CA',
       lat: '5.032',
       lon: '20.6542'
     },
     {
-      id: 2,
+      id: 3,
       name: 'Giggles Night Club',
       tags: '#nightout',
       address: '215 N Brand Blvd, 91203',
-      city: 'CA',
-      state: 'Glendale',
+      city: 'Glendale',
+      state: 'CA',
       lat: '33.0324',
       lon: '18.2664'
     },
     {
-      id: 3,
+      id: 4,
       name: 'test',
       tags: null,
       address: '123 test lane',
-      city: 'test city',
+      city: 'city',
       state: 'test state',
       lat: '123.423423',
       lon: '454.123'
@@ -138,15 +135,24 @@ function cleanTables(db) {
       .raw(
         `TRUNCATE
         "users",
+        "lists",
+        "spots",
         "users_lists",
         "liked_by",
-        "visited_by" 
+        "visited_by"
+        CASCADE
         `
       )
       .then(() =>
         Promise.all([
           trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
-          trx.raw(`SELECT setval('users_id_seq', 0)`)
+          trx.raw(`SELECT setval('users_id_seq', 0)`),
+
+          trx.raw(`ALTER SEQUENCE spots_id_seq minvalue 0 START WITH 1`),
+          trx.raw(`SELECT setval('spots_id_seq', 0)`),
+
+          trx.raw(`ALTER SEQUENCE lists_id_seq minvalue 0 START WITH 1`),
+          trx.raw(`SELECT setval('lists_id_seq', 0)`)
         ])
       )
   );
@@ -165,7 +171,6 @@ function seedUsers(db, users) {
   }));
   return db.transaction(async (trx) => {
     await trx.into('users').insert(preppedUsers);
-
     await trx.raw(`SELECT setval('users_id_seq', ?)`, [
       users[users.length - 1].id
     ]);
@@ -175,9 +180,8 @@ function seedUsers(db, users) {
 function seedSpotsTable(db, spots) {
   return db.transaction(async (trx) => {
     await trx.into('spots').insert(spots);
-
-    await trx.raw(`SELECT setval('users_id_seq', ?)`, [
-      users[users.length - 1].id
+    await trx.raw(`SELECT setval('spots_id_seq', ?)`, [
+      spots[spots.length - 1].id
     ]);
   });
 }
@@ -185,18 +189,17 @@ function seedSpotsTable(db, spots) {
 function seedListsTable(db, lists) {
   return db.transaction(async (trx) => {
     await trx.into('lists').insert(lists);
-
-    await trx.raw(`SELECT setval('users_id_seq', ?)`, [
-      users[users.length - 1].id
+    await trx.raw(`SELECT setval('lists_id_seq', ?)`, [
+      lists[lists.length - 1].id
     ]);
   });
 }
 
 function seedUsersSpotsLists(db) {
-  return db.transaction(async (trx) => {
-    await seedUsers(makeUsersArray);
-    await seedSpotsTable(makeSpotsData);
-    await seedListsTable(makeListsData);
+  return db.transaction(async () => {
+    await seedUsers(db, makeUsersArray());
+    await seedSpotsTable(db, makeSpotsData());
+    await seedListsTable(db, makeListsData());
   });
 }
 
