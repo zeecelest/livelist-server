@@ -72,7 +72,7 @@ listsRouter
     let package = [];
     let spots = [];
     try {
-      ListsService.getListById(req.app.get('db'), req.params.list_id).then(
+      return ListsService.getListById(req.app.get('db'), req.params.list_id).then(
         resp => {
           list = {
             list_name: resp.rows[0].list_name,
@@ -94,6 +94,7 @@ listsRouter
             };
             list.spots.push(item);
           });
+          console.log(list)
           res.status(200).json(list);
         },
       );
