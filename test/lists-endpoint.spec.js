@@ -69,6 +69,31 @@ describe('Lists Endpoint', function() {
     });
   });
 
+  describe(`POST /api/lists`, () => {
+    context(`Given a valid auth header`, () => {
+      let keys = ['city', 'state', 'name', 'is_public', 'tags'];
+      for (let i = 0; i < keys.length - 1; i++) {
+        it(`responds with 400 and the missing key : ${keys[i]}`, () => {
+          let reqObj = {
+            state: 'CA',
+            city: 'Los_Angeles',
+            tags: '#awesome',
+            name: 'I made and edit on this name',
+            is_public: true
+          };
+          delete reqObj[keys[i]];
+          const validUser = helpers.makeUsersArray()[0];
+          return supertest(app)
+            .post('/api/lists')
+            .send(reqObj)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', helpers.makeAuthHeader(validUser))
+            .expect(400, { error: `Missing '${keys[i]}' in request body` });
+        });
+      }
+    });
+  });
+
   describe(`PATCH /api/lists?list_id=X`, () => {
     context(`Given a valid auth header`, () => {
       let keys = ['city', 'state', 'name', 'is_public', 'tags'];
@@ -93,33 +118,39 @@ describe('Lists Endpoint', function() {
       }
     });
   });
-  describe(`POST /api/lists?list_id=X`, () => {
+
+  describe(`DELETE /api/lists/X`, () => {
+    context(`Given no auth header`, () => {
+      it(`Responds with a 400 and Unauthorized`, () => {
+        return (
+          supertest(app)
+            .delete('/api/lists/3')
+            // .set('Authorization', helpers.makeAuthHeader(validUser))
+            .expect(401, { error: 'Missing bearer token' })
+        );
+      });
+    });
     context(`Given a valid auth header`, () => {
-      let keys = ['city', 'state', 'name', 'is_public', 'tags'];
-      for (let i = 0; i < keys.length - 1; i++) {
-        it(`responds with 400 and the missing key : ${keys[i]}`, () => {
-          let reqObj = {
-            state: 'CA',
-            city: 'Los_Angeles',
-            tags: '#awesome',
-            name: 'I made and edit on this name',
-            is_public: true
-          };
-          delete reqObj[keys[i]];
-          const validUser = helpers.makeUsersArray()[0];
-          return supertest(app)
-            .post('/api/lists')
-            .send(reqObj)
-            .set('Content-Type', 'application/json')
-            .set('Authorization', helpers.makeAuthHeader(validUser))
-            .expect(400, { error: `Missing '${keys[i]}' in request body` });
-        });
-      }
+      it(`Responds with a 200`, () => {
+        const validUser = helpers.makeUsersArray()[0];
+        return supertest(app)
+          .delete('/api/lists/3')
+          .set('Authorization', helpers.makeAuthHeader(validUser))
+          .expect(200);
+      });
+      it(`Responds with a 401 Not Found`, () => {
+        const validUser = helpers.makeUsersArray()[0];
+        return supertest(app)
+          .delete('/api/lists/9999999')
+          .set('Authorization', helpers.makeAuthHeader(validUser))
+          .expect(200, { message: 'You dont have access' });
+      });
     });
   });
 });
 
 let listOne = {
+  /// if seed file is changed : dependant tests will fail. Highlight listOne and find out what the actual response obj is
   list_name: 'Date night',
   list_id: 1,
   tags: '#datenight',
