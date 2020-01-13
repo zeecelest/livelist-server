@@ -68,11 +68,12 @@ describe('Lists Endpoint', function() {
       });
     });
   });
+
   describe(`PATCH /api/lists?list_id=X`, () => {
     context(`Given a valid auth header`, () => {
       let keys = ['city', 'state', 'name', 'is_public', 'tags'];
       for (let i = 0; i < keys.length; i++) {
-        it(`responds with 400 and the missing key`, () => {
+        it(`responds with 400 and the missing key : ${keys[i]}`, () => {
           let reqObj = {
             state: 'CA',
             city: 'Los_Angeles',
@@ -84,6 +85,30 @@ describe('Lists Endpoint', function() {
           const validUser = helpers.makeUsersArray()[0];
           return supertest(app)
             .patch('/api/lists/1')
+            .send(reqObj)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', helpers.makeAuthHeader(validUser))
+            .expect(400, { error: `Missing '${keys[i]}' in request body` });
+        });
+      }
+    });
+  });
+  describe(`POST /api/lists?list_id=X`, () => {
+    context(`Given a valid auth header`, () => {
+      let keys = ['city', 'state', 'name', 'is_public', 'tags'];
+      for (let i = 0; i < keys.length - 1; i++) {
+        it(`responds with 400 and the missing key : ${keys[i]}`, () => {
+          let reqObj = {
+            state: 'CA',
+            city: 'Los_Angeles',
+            tags: '#awesome',
+            name: 'I made and edit on this name',
+            is_public: true
+          };
+          delete reqObj[keys[i]];
+          const validUser = helpers.makeUsersArray()[0];
+          return supertest(app)
+            .post('/api/lists')
             .send(reqObj)
             .set('Content-Type', 'application/json')
             .set('Authorization', helpers.makeAuthHeader(validUser))
