@@ -15,8 +15,9 @@ describe('Lists Endpoint', function() {
   before('cleanup', () => helpers.cleanTables(db));
 
   afterEach('cleanup', () => helpers.cleanTables(db));
-  beforeEach('insert users, languages and words', () => {
-    return helpers.seedUsersSpotsLists(db);
+
+  beforeEach('insert users, languages and words', async () => {
+    return await helpers.seedUsersSpotsLists(db);
   });
 
   describe(`GET /api/lists`, () => {
@@ -59,22 +60,81 @@ describe('Lists Endpoint', function() {
       it(`responds with 200 and the specified list`, () => {
         const validUser = helpers.makeUsersArray()[0];
         return supertest(app)
-          .get('/api/lists?list_id=1')
+          .get('/api/lists/1')
           .set('Authorization', helpers.makeAuthHeader(validUser))
-          .expect(200);
+          .expect(200, listOne);
       });
     });
   });
 
-  describe(`PATCH /api/lists/:id`, () => {
-    context(`Given a valid auth header`, () => {
-      it(`responds with 200 and the specified list`, () => {
-        const validUser = helpers.makeUsersArray()[0];
-        return supertest(app)
-          .patch('/api/lists?list_id=1')
-          .set('Authorization', helpers.makeAuthHeader(validUser))
-          .expect(200);
-      });
-    });
-  });
+  // describe(`PATCH /api/lists?list_id=X`, () => {
+  //   context(`Given a valid auth header`, () => {
+  //     it(`responds with 200 and the specified list`, () => {
+  //       const validUser = helpers.makeUsersArray()[0];
+  //       return supertest(app)
+  //         .patch('/api/lists?list_id=1')
+  //         .set('Authorization', helpers.makeAuthHeader(validUser))
+  //         .expect(200);
+  //     });
+  //   });
+  // });
 });
+
+let listOne = {
+  list_name: 'Date night',
+  list_id: 1,
+  tags: '#datenight',
+  created_by: 'Dunder Mifflin Admin',
+  spots: [
+    {
+      id: 1,
+      name: 'Pinks Hot Dogs',
+      tags: '#restaurant',
+      address: '709 N La Brea Ave',
+      city: 'CA',
+      state: 'Los Angeles',
+      lat: '34.083824',
+      lng: '-118.344266'
+    },
+    {
+      id: 2,
+      name: 'Giggles Night Club',
+      tags: '#nightout',
+      address: '215 N Brand Blvd',
+      city: 'CA',
+      state: 'Los Angeles',
+      lat: '34.032400',
+      lng: '-118.324664'
+    },
+    {
+      id: 3,
+      name: 'Hickups',
+      tags: '#cheap #tips',
+      address: '215 N Brand Blvd',
+      city: 'CA',
+      state: 'Los Angeles',
+      lat: '34.0324',
+      lng: '-118.332664'
+    },
+    {
+      id: 4,
+      name: 'Giggles Night Club',
+      tags: '#wine #beer',
+      address: '18 N Brand Blvd',
+      city: 'CA',
+      state: 'Los Angeles',
+      lat: '34.0324',
+      lng: '-118.312664'
+    },
+    {
+      id: 5,
+      name: 'Marvel Museum',
+      tags: '#views',
+      address: '11 N Fake',
+      city: 'CA',
+      state: 'Los Angeles',
+      lat: '34.0324',
+      lng: '-118.325664'
+    }
+  ]
+};

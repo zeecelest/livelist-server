@@ -135,15 +135,24 @@ function cleanTables(db) {
       .raw(
         `TRUNCATE
         "users",
+        "lists",
+        "spots",
         "users_lists",
         "liked_by",
-        "visited_by" 
+        "visited_by"
+        CASCADE
         `
       )
       .then(() =>
         Promise.all([
           trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
-          trx.raw(`SELECT setval('users_id_seq', 0)`)
+          trx.raw(`SELECT setval('users_id_seq', 0)`),
+
+          trx.raw(`ALTER SEQUENCE spots_id_seq minvalue 0 START WITH 1`),
+          trx.raw(`SELECT setval('spots_id_seq', 0)`),
+
+          trx.raw(`ALTER SEQUENCE lists_id_seq minvalue 0 START WITH 1`),
+          trx.raw(`SELECT setval('lists_id_seq', 0)`)
         ])
       )
   );
@@ -190,7 +199,7 @@ function seedUsersSpotsLists(db) {
   return db.transaction(async () => {
     await seedUsers(db, makeUsersArray());
     await seedSpotsTable(db, makeSpotsData());
-    // await seedListsTable(db, makeListsData());
+    await seedListsTable(db, makeListsData());
   });
 }
 
