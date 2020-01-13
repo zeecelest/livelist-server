@@ -70,7 +70,7 @@ function makeListsData() {
 function makeSpotsData() {
   return [
     {
-      id: 2,
+      id: 1,
       name: 'Pinks Hot Dogs',
       tags: '#restaurant',
       address: '709 N La Brea Ave, 90038',
@@ -80,7 +80,7 @@ function makeSpotsData() {
       lon: '20.6542'
     },
     {
-      id: 3,
+      id: 2,
       name: 'Giggles Night Club',
       tags: '#nightout',
       address: '215 N Brand Blvd, 91203',
@@ -90,7 +90,7 @@ function makeSpotsData() {
       lon: '18.2664'
     },
     {
-      id: 4,
+      id: 3,
       name: 'test',
       tags: null,
       address: '123 test lane',
