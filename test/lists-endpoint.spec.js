@@ -91,6 +91,7 @@ describe('Lists Endpoint', function() {
       }
     });
   });
+
   describe(`POST /api/lists?list_id=X`, () => {
     context(`Given a valid auth header`, () => {
       let keys = ['city', 'state', 'name', 'is_public', 'tags'];
