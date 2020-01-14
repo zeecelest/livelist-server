@@ -40,7 +40,6 @@ listsRouter
         is_public,
       };
       const user_id = req.user.id;
-      console.log('user_is', user_id);
       return ListsService.insertList(res.app.get('db'), newList, user_id).then(
         list => {
           res.status(200).json(list);
@@ -76,7 +75,6 @@ listsRouter
         req.app.get('db'),
         req.params.list_id,
       ).then(resp => {
-        console.log('THING', resp);
         if (resp.rows.length !== 0) {
           list = {
             list_name: resp.rows[0].list_name,
