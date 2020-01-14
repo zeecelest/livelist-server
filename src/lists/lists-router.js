@@ -112,7 +112,7 @@ listsRouter
       next(error);
     }
   })
-  .delete(jsonBodyParser, (req, res, next) => {
+  .delete((req, res, next) => {
     try {
       let db = req.app.get('db');
       ListsService.deleteListReference(
