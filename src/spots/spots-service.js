@@ -7,9 +7,8 @@ const SpotsService = {
       return knex('lists_spots')
         .transacting(trx)
         .delete()
-        .where({ spot_id, user_id })
-        .then((resp) => {
-          console.log(resp);
+        .where({spot_id})
+        .then(resp => {
           return knex('spots')
             .transacting(trx)
             .delete()
@@ -50,15 +49,38 @@ const SpotsService = {
       .where({ id })
       .first();
   },
-  //  deleteSpot(knex, id) {
-  //    return knex('spots')
-  //      .where({id})
-  //      .delete();
-  //  },
-  updateSpot(knex, id, newSpotsField) {
-    return knex('spots')
-      .where({ id })
-      .update(newSpotsField);
-  }
+  updateSpot(knex, spot_id, user_id, list_id, newSpot) {
+    console.log(newSpot, spot_id, user_id, list_id)
+    return knex.raw(`
+      UPDATE spots
+      SET
+        name = '${newSpot.name}',
+        address = '${newSpot.address}',
+        city = '${newSpot.city}',
+        state = '${newSpot.state}',
+        tags = '${newSpot.tags}'
+      WHERE id = (
+        SELECT spot_id
+        FROM lists_spots
+        WHERE lists_spots.list_id = (
+          SELECT users_lists.list_id
+          FROM users_lists
+          WHERE users_lists.users_id = ${user_id}
+          AND users_lists.list_id = ${list_id}
+        )
+        AND spot_id = ${spot_id}
+      )
+      RETURNING *
+      ;
+    `)
+      .then(res => {
+        if(res.rows.length === 0){
+          return {message: "nothing here"}
+        }
+        else {
+          return res.rows[0]
+        }
+      })
+  },
 };
 module.exports = SpotsService;
