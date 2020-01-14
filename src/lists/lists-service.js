@@ -114,6 +114,37 @@ const ListService = {
       .where({id})
       .delete();
   },
+  updateList(knex, user_id, list_id, newList){
+    console.log("UNICORN")
+    console.log(newList, user_id, list_id)
+    return knex.raw(`
+      UPDATE lists
+      SET
+          name = '${newList.name}',
+          city = '${newList.city}',
+          state = '${newList.state}',
+          is_public = ${newList.is_public},
+          description = '${newList.description}',
+          tags = '${newList.tags}'
+      WHERE id = (
+        SELECT users_lists.list_id
+        FROM users_lists
+        WHERE users_lists.users_id = ${user_id}
+        AND users_lists.list_id = ${list_id}
+        )
+      AND id = ${list_id}
+      RETURNING *
+      ;
+    `)
+      .then(res => {
+        if(res.rows.length === 0) {
+          return {message: "no lists"}
+        }
+        else {
+          return res.rows[0]
+        }
+      })
+  },
   updateListReference(knex, user_id, list_id, newListField) {
     return knex('users_lists')
       .where({user_id, list_id})
