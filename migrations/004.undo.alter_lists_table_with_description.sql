@@ -1,0 +1,3 @@
+ALTER TABLE lists
+DROP COLUMN description VARCHAR(250)
+;

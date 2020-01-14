@@ -62,29 +62,31 @@ const ListService = {
   },
   getListById(knex, id) {
     return knex.raw(`
-        SELECT lists_spots.list_id,
-               lists.name AS list_name,
-               lists.tags AS list_tags,
-               users.name AS created_by,
-               spot_id,
-               spots.name,
-               spots.tags AS spots_tags,
-               spots.address,
-               spots.city,
-               spots.state,
-               spots.lat,
-               spots.lon AS lng
-               FROM lists_spots
-               JOIN spots
-               ON spot_id = spots.id
-               JOIN lists
-               ON list_id = lists.id
-               JOIN users_lists
-               ON lists_spots.list_id = users_lists.list_id
-               JOIN users
-               ON users_lists.users_id = users.id
-               WHERE lists_spots.list_id = ${id};
-    `);
+        SELECT
+          lists_spots.list_id,
+          lists.name AS list_name,
+          lists.tags AS list_tags,
+          users.name AS created_by,
+          spot_id,
+          spots.name,
+          spots.tags AS spots_tags,
+          spots.address,
+          spots.city,
+          spots.state,
+          spots.lat,
+          spots.lon AS lng
+        FROM lists_spots
+        JOIN spots
+        ON spot_id = spots.id
+        JOIN lists
+        ON list_id = lists.id
+        JOIN users_lists
+        ON lists_spots.list_id = users_lists.list_id
+        JOIN users
+        ON users_lists.users_id = users.id
+        WHERE lists_spots.list_id = ${id}
+        ;
+    `)
   },
   deleteListReference(knex, list_id, users_id) {
     return knex.transaction((trx) => {
@@ -111,17 +113,35 @@ const ListService = {
         });
     });
   },
-  deleteList(knex, id) {
-    // currently unused
-    return knex('lists')
-      .where({ id })
-      .delete();
+  updateList(knex, user_id, list_id, newList){
+    return knex.raw(`
+      UPDATE lists
+      SET
+        name = '${newList.name}',
+        city = '${newList.city}',
+        state = '${newList.state}',
+        is_public = ${newList.is_public},
+        description = '${newList.description}',
+        tags = '${newList.tags}'
+      WHERE id = (
+        SELECT users_lists.list_id
+        FROM users_lists
+        WHERE users_lists.users_id = ${user_id}
+        AND users_lists.list_id = ${list_id}
+        )
+      AND id = ${list_id}
+      RETURNING *
+      ;
+    `)
+      .then(res => {
+        if(res.rows.length === 0) {
+          return {message: "no lists"}
+        }
+        else {
+          return res.rows[0]
+        }
+      })
   },
-  updateListReference(knex, user_id, list_id, newListField) {
-    return knex('users_lists')
-      .where({ user_id, list_id })
-      .update(newListField);
-  }
 };
 
 module.exports = ListService;
