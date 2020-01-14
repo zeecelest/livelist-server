@@ -10,6 +10,7 @@ const listsRouter = require('./lists/lists-router');
 const spotsRouter = require('./spots/spots-router');
 const app = express();
 
+/* todo - change the morgan method later "tiny" */
 app.use(
   morgan(NODE_ENV === 'production' ? 'common' : 'common', {
     skip: () => NODE_ENV === 'test'
