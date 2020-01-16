@@ -24,10 +24,10 @@ spotsRouter
     city = city.replace(/ /g, '+');
     https.get(
       `https://maps.googleapis.com/maps/api/geocode/json?address=${address},+${city},+${state}&key=${API_KEY}`,
-      (ress) => {
+      ress => {
         ress.setEncoding('utf8');
         let body = '';
-        ress.on('data', (data) => {
+        ress.on('data', data => {
           body += data;
         });
         ress.on('end', () => {
@@ -100,9 +100,15 @@ spotsRouter
         address,
         city,
         state,
-        tags
+        tags,
       };
-      SpotsService.updateSpot(req.app.get('db'), req.params.spot_id, req.user.id, list_id, edittedSpot).then(spot => {
+      SpotsService.updateSpot(
+        req.app.get('db'),
+        req.params.spot_id,
+        req.user.id,
+        list_id,
+        edittedSpot,
+      ).then(spot => {
         res.status(200).json(spot);
       });
     } catch (error) {
@@ -114,9 +120,9 @@ spotsRouter
       return SpotsService.deleteSpotReference(
         req.app.get('db'),
         parseInt(req.params.spot_id),
-        req.user.id
-      ).then((response) => {
-        return res.status(200).json({ message: response });
+        req.user.id,
+      ).then(response => {
+        return res.status(200).json({message: response});
       });
     } catch (error) {
       next(error);

@@ -3,7 +3,7 @@ const SpotsService = {
     return knex.select('*').from('spots');
   },
   deleteSpotReference(knex, spot_id, user_id) {
-    console.log(user_id, spot_id)
+    console.log(user_id, spot_id);
     return knex.raw(`
       BEGIN;
         DO $$
@@ -40,7 +40,7 @@ const SpotsService = {
       COMMIT
 
 
-    `)
+    `);
     //    return knex.raw(`
     //      BEGIN;
     //        DELETE
@@ -77,23 +77,23 @@ const SpotsService = {
     //    });
   },
   insertSpot(knex, newSpot, list_id) {
-    return knex.transaction((trx) => {
+    return knex.transaction(trx => {
       return knex('spots')
         .transacting(trx)
         .insert(newSpot)
         .returning('*')
-        .then((res) => {
+        .then(res => {
           return knex('lists_spots')
             .transacting(trx)
             .insert({
               list_id: list_id,
-              spot_id: res[0].id
+              spot_id: res[0].id,
             })
             .returning('*')
-            .then((res2) => {
+            .then(res2 => {
               return {
                 list_id,
-                ...res[0]
+                ...res[0],
               };
             });
         });
@@ -103,12 +103,14 @@ const SpotsService = {
     return knex
       .from('spots')
       .select('*')
-      .where({ id })
+      .where({id})
       .first();
   },
   updateSpot(knex, spot_id, user_id, list_id, newSpot) {
-    console.log(newSpot, spot_id, user_id, list_id)
-    return knex.raw(`
+    console.log(newSpot, spot_id, user_id, list_id);
+    return knex
+      .raw(
+        `
       UPDATE spots
       SET
         name = '${newSpot.name}',
@@ -129,15 +131,15 @@ const SpotsService = {
       )
       RETURNING *
       ;
-    `)
+    `,
+      )
       .then(res => {
-        if(res.rows.length === 0){
-          return {message: "nothing here"}
+        if (res.rows.length === 0) {
+          return {message: 'nothing here'};
+        } else {
+          return res.rows[0];
         }
-        else {
-          return res.rows[0]
-        }
-      })
+      });
   },
 };
 module.exports = SpotsService;

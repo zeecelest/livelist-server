@@ -1,7 +1,8 @@
 const ListService = {
   getAllLists(knex, user_id) {
     return knex
-      .raw(`
+      .raw(
+        `
         SELECT (
           SELECT COUNT(*)
             FROM liked_by
@@ -25,20 +26,21 @@ const ListService = {
         FROM lists;
       COMMIT;
 
-    `)
-      .then((resp) => resp);
+    `,
+      )
+      .then(resp => resp);
     //    return knex
     //      .raw(
     //        `
     //        SELECT count(list_id) AS liked,
-    //               lists.id, 
-    //               lists.name, 
-    //               lists.tags, 
-    //               lists.city, 
-    //               lists.state, 
-    //               lists.is_public 
+    //               lists.id,
+    //               lists.name,
+    //               lists.tags,
+    //               lists.city,
+    //               lists.state,
+    //               lists.is_public
     //               FROM liked_by
-    //               RIGHT JOIN lists 
+    //               RIGHT JOIN lists
     //               ON lists.id = liked_by.list_id
     //               WHERE is_public = true
     //               GROUP BY lists.id;
@@ -54,33 +56,33 @@ const ListService = {
       JOIN lists
       ON list_id = lists.id
       WHERE users_id = ${id};
-    `
+    `,
       )
-      .then((resp) => resp.rows);
+      .then(resp => resp.rows);
   },
   getAllListsFromCity(knex, city) {
     // needs implementation
     return knex
       .select('*')
       .from('lists')
-      .where({ is_public: true })
+      .where({is_public: true})
       .where('city', 'ilike', city);
   },
   insertList(knex, newList, users_id) {
-    return knex.transaction((trx) => {
+    return knex.transaction(trx => {
       return knex('lists')
         .transacting(trx)
         .insert(newList)
         .returning('*')
-        .then((resp) => {
+        .then(resp => {
           const list_id = resp[0].id;
           return knex('users_lists')
             .transacting(trx)
             .insert({
               users_id: users_id,
-              list_id: list_id
+              list_id: list_id,
             })
-            .then((res2) => {
+            .then(res2 => {
               return resp[0];
             });
         });
@@ -112,35 +114,37 @@ const ListService = {
         ON users_lists.users_id = users.id
         WHERE lists_spots.list_id = ${id}
         ;
-    `)
+    `);
   },
   deleteListReference(knex, list_id, users_id) {
-    return knex.transaction((trx) => {
+    return knex.transaction(trx => {
       return knex('users_lists')
         .transacting(trx)
         .delete()
         .where('users_id', '=', users_id)
         .andWhere('list_id', '=', list_id)
-        .then((res) => {
+        .then(res => {
           if (res === 0) {
-            return { message: 'You dont have access' };
+            return {message: 'You dont have access'};
           }
           return knex('lists_spots')
             .transacting(trx)
-            .where({ list_id })
+            .where({list_id})
             .delete()
-            .then((res) => {
+            .then(res => {
               return knex('lists')
                 .transacting(trx)
                 .where('id', list_id)
                 .delete()
-                .then((res) => res);
+                .then(res => res);
             });
         });
     });
   },
-  updateList(knex, user_id, list_id, newList){
-    return knex.raw(`
+  updateList(knex, user_id, list_id, newList) {
+    return knex
+      .raw(
+        `
       UPDATE lists
       SET
         name = '${newList.name}',
@@ -158,15 +162,15 @@ const ListService = {
       AND id = ${list_id}
       RETURNING *
       ;
-    `)
+    `,
+      )
       .then(res => {
-        if(res.rows.length === 0) {
-          return {message: "no lists"}
+        if (res.rows.length === 0) {
+          return {message: 'no lists'};
+        } else {
+          return res.rows[0];
         }
-        else {
-          return res.rows[0]
-        }
-      })
+      });
   },
 };
 
