@@ -13,10 +13,10 @@ listsRouter
   .get((req, res, next) => {
     try {
       ListsService.getAllLists(req.app.get('db'), req.user.id).then(lists => {
-        if (lists[0].rows.length === 0) {
+        if (lists.rows === 0) {
           res.status(200).json({message: 'There are no lists... thats odd.'});
         } else {
-          res.status(200).json(lists[0].rows);
+          res.status(200).json(lists.rows);
         }
       });
     } catch (error) {
@@ -160,6 +160,22 @@ listsRouter
       next(error);
     }
   });
+
+/*Toggle favorite on list, adds/removes record in liked_by table - dlb*/
+listsRouter
+  .use(requireAuth)
+  .route('/like/:id')
+  .post((req, res, next) => {
+    try {
+      ListsService.likeList(req.app.get('db'), req.params.id, req.user.id)
+        .then(resp => {
+          res.status(200).json({like: resp[2].rows[0].count})
+        })
+    }
+    catch (error) {
+      next(error);
+    }
+  })
 
 listsRouter
   .use(requireAuth)

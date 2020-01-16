@@ -3,8 +3,7 @@ const ListService = {
    * found in the datase.*/
   getAllLists(knex, user_id) {
     return knex
-      .raw(
-        `
+      .raw(`
         SELECT (
           SELECT COUNT(*)
             FROM liked_by
@@ -26,28 +25,7 @@ const ListService = {
         ) AS on_fire,
         *
         FROM lists;
-      COMMIT;
-
-    `,
-      )
-      .then(resp => resp);
-    //    return knex
-    //      .raw(
-    //        `
-    //        SELECT count(list_id) AS liked,
-    //               lists.id,
-    //               lists.name,
-    //               lists.tags,
-    //               lists.city,
-    //               lists.state,
-    //               lists.is_public
-    //               FROM liked_by
-    //               RIGHT JOIN lists
-    //               ON lists.id = liked_by.list_id
-    //               WHERE is_public = true
-    //               GROUP BY lists.id;
-    //        `
-    //      )
+    `)
   },
   getAllListsFromUser(knex, id) {
     return knex
@@ -174,6 +152,35 @@ const ListService = {
         }
       });
   },
-};
-
+  likeList(knex, list_id, user_id) {
+    return knex
+      .raw(`
+      BEGIN;
+      DO $$
+        DECLARE
+          row_exists NUMERIC;
+        BEGIN
+          SELECT COUNT(*)
+          INTO row_exists
+          FROM liked_by
+          WHERE list_id = ${parseInt(list_id)}
+          AND users_id = ${parseInt(user_id)};
+          IF (row_exists > 0) THEN
+            DELETE FROM liked_by
+            WHERE list_id = ${parseInt(list_id)}
+            AND users_id = ${user_id};
+          ELSE
+            INSERT INTO liked_by
+            VALUES(${user_id}, ${parseInt(list_id)});
+          END IF;
+        END;
+        $$ LANGUAGE plpgsql;
+          SELECT COUNT(*)
+          FROM liked_by
+          WHERE list_id = ${parseInt(list_id)}
+          AND users_id = ${parseInt(user_id)};
+        COMMIT;
+      `)
+  }
+}
 module.exports = ListService;

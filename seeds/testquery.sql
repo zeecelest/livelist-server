@@ -1,38 +1,86 @@
 -- select lists if users_id and list_id are on users_lists
 
+DO $$
+DECLARE
+  row_exists NUMERIC;
+BEGIN
+  SELECT COUNT(*)
+  INTO row_exists
+  FROM liked_by
+  WHERE list_id = 1
+  AND users_id = 1;
+
+  IF (row_exists > 0) THEN
+    DELETE FROM liked_by
+    WHERE list_id = 1
+    AND users_id = 1;
+  ELSE
+    INSERT INTO liked_by
+    VALUES(1, 1);
+  END IF;
+END;
+$$
+
+
+--DO $$
+--  DECLARE temp int;
+--  BEGIN
+--    SELECT COUNT(*) INTO temp,
+--      IF temp = 1
+--        THEN 
+--          DELETE FROM liked_by
+--          WHERE list_id = 1
+--          AND users_id = 1
+--        ELSE
+--          INSERT INTO liked_by
+--          VALUES(1, 1)
+--      END IF;
+--    FROM liked_by
+--    WHERE list_id = 1
+--    AND users_id = 1
+--  END;
+--$$
+--  THEN
+--    DELETE FROM liked_by
+--    WHERE list_id = 1
+--    AND users_id = 1
+--  ELSE
+--   INSERT INTO liked_by
+--   VALUES(1, 1)
+--END
 -- ** Grabcount of record
-BEGIN;
---  DO $$
---    DECLARE temp int;
---    BEGIN
---  SELECT list_id
---  INTO temp
---  FROM liked_by
---  WHERE list_id = lists.id;
---  END
---  $$;
-  SELECT (
-    SELECT COUNT(*)
-      FROM liked_by
-      WHERE list_id = lists.id
-  ) AS likes,
-  (SELECT COUNT(*)
-    FROM liked_by
-    WHERE list_id = lists.id
-    AND liked_by.users_id = 1
-  ) AS liked_by_user,
-  (
-    SELECT COUNT(*)
-    FROM liked_by
-    WHERE list_id = lists.id
-    AND list_id > (
-      SELECT COUNT(*)
-      FROM liked_by
-    ) * .05
-  ) AS on_fire,
-  *
-  FROM lists;
-COMMIT;
+--BEGIN;
+----  DO $$
+----    DECLARE temp int;
+----    BEGIN
+----  SELECT list_id
+----  INTO temp
+----  FROM liked_by
+----  WHERE list_id = lists.id;
+----  END
+----  $$;
+--  SELECT (
+--    SELECT COUNT(*)
+--      FROM liked_by
+--      WHERE list_id = lists.id
+--  ) AS likes,
+--  (SELECT COUNT(*)
+--    FROM liked_by
+--    WHERE list_id = lists.id
+--    AND liked_by.users_id = 1
+--  ) AS liked_by_user,
+--  (
+--    SELECT COUNT(*)
+--    FROM liked_by
+--    WHERE list_id = lists.id
+--    AND list_id > (
+--      SELECT COUNT(*)
+--      FROM liked_by
+--    ) * .05
+--  ) AS on_fire,
+--  *
+--  FROM lists;
+--COMMIT;
 
 
 -- ** delete refrence
