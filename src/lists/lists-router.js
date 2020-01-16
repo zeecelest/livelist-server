@@ -12,11 +12,11 @@ listsRouter
   .route('/')
   .get((req, res, next) => {
     try {
-      ListsService.getAllLists(req.app.get('db')).then(lists => {
-        if (lists.length === 0) {
+      ListsService.getAllLists(req.app.get('db'), req.user.id).then(lists => {
+        if (lists[0].rows.length === 0) {
           res.status(200).json({message: 'There are no lists... thats odd.'});
         } else {
-          res.status(200).json(lists.rows);
+          res.status(200).json(lists[0].rows);
         }
       });
     } catch (error) {

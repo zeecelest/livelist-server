@@ -113,7 +113,7 @@ spotsRouter
     try {
       return SpotsService.deleteSpotReference(
         req.app.get('db'),
-        req.params.spot_id,
+        parseInt(req.params.spot_id),
         req.user.id
       ).then((response) => {
         return res.status(200).json({ message: response });

@@ -1,23 +1,49 @@
 const ListService = {
-  getAllLists(knex) {
+  getAllLists(knex, user_id) {
     return knex
-      .raw(
-        `
-        SELECT count(list_id) AS liked,
-               lists.id, 
-               lists.name, 
-               lists.tags, 
-               lists.city, 
-               lists.state, 
-               lists.is_public 
-               FROM liked_by
-               RIGHT JOIN lists 
-               ON lists.id = liked_by.list_id
-               WHERE is_public = true
-               GROUP BY lists.id;
-        `
-      )
-      .then((rows) => rows);
+      .raw(`
+        SELECT (
+          SELECT COUNT(*)
+            FROM liked_by
+            WHERE list_id = lists.id
+        ) AS likes,
+        (SELECT COUNT(*)
+          FROM liked_by
+          WHERE list_id = lists.id
+          AND liked_by.users_id = ${user_id}
+        ) AS liked_by_user,
+        (
+          SELECT COUNT(*)
+          FROM liked_by
+          WHERE list_id = lists.id
+          AND list_id > (
+            SELECT COUNT(*)
+            FROM liked_by
+          ) * .05
+        ) AS on_fire,
+        *
+        FROM lists;
+      COMMIT;
+
+    `)
+      .then((resp) => resp);
+    //    return knex
+    //      .raw(
+    //        `
+    //        SELECT count(list_id) AS liked,
+    //               lists.id, 
+    //               lists.name, 
+    //               lists.tags, 
+    //               lists.city, 
+    //               lists.state, 
+    //               lists.is_public 
+    //               FROM liked_by
+    //               RIGHT JOIN lists 
+    //               ON lists.id = liked_by.list_id
+    //               WHERE is_public = true
+    //               GROUP BY lists.id;
+    //        `
+    //      )
   },
   getAllListsFromUser(knex, id) {
     return knex

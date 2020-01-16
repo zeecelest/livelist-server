@@ -3,25 +3,63 @@ const SpotsService = {
     return knex.select('*').from('spots');
   },
   deleteSpotReference(knex, spot_id, user_id) {
+    console.log(user_id, spot_id)
     return knex.raw(`
       BEGIN;
-        DELETE
-        FROM lists_spots
-        WHERE spot_id = ${spot_id}
-        AND list_id = (
-          SELECT
-            users_lists.list_id
-            FROM users_lists
-            JOIN lists_spots
-            ON lists_spots.list_id = users_lists.list_id
-            WHERE users_lists.users_id = ${user_id}
-            AND lists_spots.spot_id = ${spot_id}
-        );
+        DO $$
+          DECLARE temp int;
+          BEGIN
+      SELECT
+        users_lists.list_id
+        INTO temp
+        FROM users_lists
+        JOIN lists_spots
+        ON lists_spots.list_id = users_lists.list_id
+        WHERE users_lists.users_id = ${user_id}
+        AND lists_spots.spot_id = ${spot_id};
+        IF NOT FOUND THEN
+          RAISE EXCEPTION 'No access to that record';
+        END IF;
+      END
+      $$;
+      DELETE
+      FROM lists_spots
+      WHERE spot_id = ${spot_id}
+      AND EXISTS (
+        SELECT
+          users_lists.list_id
+          FROM users_lists
+          JOIN lists_spots
+          ON lists_spots.list_id = users_lists.list_id
+          WHERE users_lists.users_id = ${user_id}
+          AND lists_spots.spot_id = ${spot_id}
+      );
         DELETE
         FROM spots
-        WHERE id = ${spot_id};
-      COMMIT;
+        WHERE id = 1;
+      COMMIT
+
+
     `)
+    //    return knex.raw(`
+    //      BEGIN;
+    //        DELETE
+    //        FROM lists_spots
+    //        WHERE spot_id = ${spot_id}
+    //        AND list_id = (
+    //          SELECT
+    //            users_lists.list_id
+    //            FROM users_lists
+    //            JOIN lists_spots
+    //            ON lists_spots.list_id = users_lists.list_id
+    //            WHERE users_lists.users_id = ${user_id}
+    //            AND lists_spots.spot_id = ${spot_id}
+    //        );
+    //        DELETE
+    //        FROM spots
+    //        WHERE id = ${spot_id};
+    //      COMMIT;
+    //    `)
     //    return knex.transaction((trx) => {
     //      return knex('lists_spots')
     //        .transacting(trx)
