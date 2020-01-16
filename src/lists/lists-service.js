@@ -1,4 +1,6 @@
 const ListService = {
+  /*on_fire returns an int if total likes is more then %5 of all likes
+   * found in the datase.*/
   getAllLists(knex, user_id) {
     return knex
       .raw(
