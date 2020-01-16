@@ -183,13 +183,13 @@ listsRouter
   .get((req, res, next) => {
     let city = req.params.city.split('_').join(' ');
     try {
-      ListsService.getAllListsFromCity(req.app.get('db'), city).then(lists => {
-        if (lists.length === 0) {
+      ListsService.getAllListsFromCity(req.app.get('db'), city, req.user.id).then(lists => {
+        if (lists.rows.length === 0) {
           return res
             .status(200)
             .json({message: `There are no lists from the city "${city}"`});
         } else {
-          return res.status(200).json(lists);
+          return res.status(200).json(lists.rows);
         }
       });
     } catch (error) {

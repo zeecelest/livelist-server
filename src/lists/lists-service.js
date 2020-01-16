@@ -40,8 +40,36 @@ const ListService = {
       )
       .then(resp => resp.rows);
   },
-  getAllListsFromCity(knex, city) {
+  getAllListsFromCity(knex, city, user_id) {
     // needs implementation
+    return knex
+      .raw(`
+        SELECT (
+          SELECT COUNT(*)
+            FROM liked_by
+            WHERE list_id = lists.id
+        ) AS likes,
+        (SELECT COUNT(*)
+          FROM liked_by
+          WHERE list_id = lists.id
+          AND liked_by.users_id = ${user_id}
+        ) AS liked_by_user,
+        (
+          SELECT COUNT(*)
+          FROM liked_by
+          WHERE list_id = lists.id
+          AND list_id > (
+            SELECT COUNT(*)
+            FROM liked_by
+          ) * .05
+        ) AS on_fire,
+        *
+        FROM lists
+        WHERE city ILIKE '${city}'
+        AND is_public IS true
+        ;
+
+    `)
     return knex
       .select('*')
       .from('lists')
