@@ -23,6 +23,9 @@ app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/lists', listsRouter);
 app.use('/api/spots', spotsRouter);
+app.route('/api').get((req, res, next) => {
+  res.status(200).json({"message": "Im awake"})
+})
 
 app.use(errorHandler);
 
