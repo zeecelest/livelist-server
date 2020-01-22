@@ -1,6 +1,6 @@
 const express = require('express');
 const ListsService = require('./lists-service');
-const {requireAuth} = require('../middleware/jwt-auth');
+const { requireAuth } = require('../middleware/jwt-auth');
 const package = require('../fixtures');
 const AuthService = require('../auth/auth-service');
 
@@ -12,9 +12,9 @@ listsRouter
   .route('/')
   .get((req, res, next) => {
     try {
-      ListsService.getAllLists(req.app.get('db'), req.user.id).then(lists => {
+      ListsService.getAllLists(req.app.get('db'), req.user.id).then((lists) => {
         if (lists.rows === 0) {
-          res.status(200).json({message: 'There are no lists... thats odd.'});
+          res.status(200).json({ message: 'There are no lists... thats odd.' });
         } else {
           res.status(200).json(lists.rows);
         }
@@ -24,11 +24,11 @@ listsRouter
     }
   })
   .post(jsonBodyParser, (req, res, next) => {
-    const {city, state, name, is_public, tags, description} = req.body;
+    const { city, state, name, is_public, tags, description } = req.body;
     for (const field of ['name', 'city', 'state', 'is_public'])
       if (!req.body[field])
         return res.status(400).json({
-          error: `Missing '${field}' in request body`,
+          error: `Missing '${field}' in request body`
         });
     try {
       const newList = {
@@ -37,13 +37,13 @@ listsRouter
         city,
         state,
         description,
-        is_public,
+        is_public
       };
       const user_id = req.user.id;
       return ListsService.insertList(res.app.get('db'), newList, user_id).then(
-        list => {
+        (list) => {
           res.status(200).json(list);
-        },
+        }
       );
     } catch (error) {
       next(error);
@@ -55,10 +55,10 @@ listsRouter
   .get((req, res, next) => {
     return ListsService.getAllListsFromUser(
       req.app.get('db'),
-      req.user.id,
-    ).then(resp => {
+      req.user.id
+    ).then((resp) => {
       if (resp.length === 0) {
-        return res.json({message: 'there are no lists to send'});
+        return res.json({ message: 'there are no lists to send' });
       } else {
         return res.status(200).json(resp);
       }
@@ -73,8 +73,8 @@ listsRouter
     try {
       return ListsService.getListById(
         req.app.get('db'),
-        req.params.list_id,
-      ).then(resp => {
+        req.params.list_id
+      ).then((resp) => {
         if (resp.rows.length !== 0) {
           list = {
             list_name: resp.rows[0].list_name,
@@ -82,9 +82,9 @@ listsRouter
             tags: resp.rows[0].list_tags,
             created_by: resp.rows[0].created_by,
             description: resp.rows[0].description,
-            spots: [],
+            spots: []
           };
-          resp.rows.forEach(x => {
+          resp.rows.forEach((x) => {
             let item = {
               id: x.spot_id,
               name: x.name,
@@ -93,7 +93,7 @@ listsRouter
               city: x.city,
               state: x.state,
               lat: x.lat,
-              lng: x.lng,
+              lng: x.lng
             };
             list.spots.push(item);
           });
@@ -104,7 +104,7 @@ listsRouter
             tags: 'none',
             created_by: 'none',
             description: 'none',
-            spots: [],
+            spots: []
           };
         }
         res.status(200).json(list);
@@ -119,10 +119,10 @@ listsRouter
       ListsService.deleteListReference(
         db,
         req.params.list_id,
-        req.user.id,
-      ).then(data => {
+        req.user.id
+      ).then((data) => {
         if (data == 0) {
-          res.json({message: 'nothing to delete'});
+          res.json({ message: 'nothing to delete' });
         } else {
           res.json(data);
         }
@@ -132,11 +132,12 @@ listsRouter
     }
   })
   .patch(jsonBodyParser, (req, res, next) => {
-    const {city, state, name, is_public, tags, description} = req.body;
+    console.log(req.body);
+    const { city, state, name, is_public, tags, description } = req.body;
     for (const field of ['city', 'state', 'name', 'is_public', 'tags'])
-      if (!req.body[field])
+      if (req.body[field] === undefined)
         return res.status(400).json({
-          error: `Missing '${field}' in request body`,
+          error: `Missing '${field}' in request body`
         });
     try {
       // need to add verification check to make sure that user owns said list
@@ -146,14 +147,14 @@ listsRouter
         name,
         is_public,
         description,
-        tags,
+        tags
       };
       ListsService.updateList(
         req.app.get('db'),
         req.user.id,
         parseInt(req.params.list_id),
-        editList,
-      ).then(list => {
+        editList
+      ).then((list) => {
         res.status(200).json(list);
       });
     } catch (error) {
@@ -167,15 +168,15 @@ listsRouter
   .route('/like/:id')
   .post((req, res, next) => {
     try {
-      ListsService.likeList(req.app.get('db'), req.params.id, req.user.id)
-        .then(resp => {
-          res.status(200).json({like: resp[2].rows[0].count})
-        })
-    }
-    catch (error) {
+      ListsService.likeList(req.app.get('db'), req.params.id, req.user.id).then(
+        (resp) => {
+          res.status(200).json({ like: resp[2].rows[0].count });
+        }
+      );
+    } catch (error) {
       next(error);
     }
-  })
+  });
 
 listsRouter
   .use(requireAuth)
@@ -183,11 +184,15 @@ listsRouter
   .get((req, res, next) => {
     let city = req.params.city.split('_').join(' ');
     try {
-      ListsService.getAllListsFromCity(req.app.get('db'), city, req.user.id).then(lists => {
+      ListsService.getAllListsFromCity(
+        req.app.get('db'),
+        city,
+        req.user.id
+      ).then((lists) => {
         if (lists.rows.length === 0) {
           return res
             .status(200)
-            .json({message: `There are no lists from the city "${city}"`});
+            .json({ message: `There are no lists from the city "${city}"` });
         } else {
           return res.status(200).json(lists.rows);
         }
