@@ -18,8 +18,8 @@ It is a collaboration between [Daniel Lee Bright](https://github.com/Brahyt), [G
 The following are the request endpoints for this server:
 
 - <strong>Auth Endpoints</strong>
-    - &ensp;POST api/auth/token => It is a request handler for user login to receive a JWT. It verifies credentials for login.          
-    - &ensp;PUT api/auth/token => It is a request handler for user login that allows automatic refreshing of token.
+    - <strong>POST api/auth/token</strong> => It is a request handler for user login to receive a JWT. It verifies credentials for login.          
+    - <strong>PUT api/auth/token</strong> => It is a request handler for user login that allows automatic refreshing of token.
 
 - <strong>User Endpoints</strong>
     - <strong>POST /api/user</strong> => It is a request handler for user registration/sign-up.
@@ -53,8 +53,8 @@ The following are the request endpoints for this server:
         "state": "FL"
     }
     ```
-    Response:
-    <strong>spots table</Strong>
+    Response:</br>
+    <strong>`spots` table</Strong>
     ```
     {
         id: 134,
@@ -67,7 +67,7 @@ The following are the request endpoints for this server:
         lng: 12.319744
     }
     ```
-    <strong>lists_spots table</strong>
+    <strong>`lists_spots` table</strong>
     ```
     {
         list_id: 2,
@@ -89,6 +89,7 @@ The following are the request endpoints for this server:
     }
     ```
     Response:
+    ```
      {
         "id": 1,
         "name": "Giggles Night Club updated",
@@ -99,7 +100,7 @@ The following are the request endpoints for this server:
         "lat": "34.083824",
         "lon": "-118.344266"
     }
-    
+    ```
 - <strong>List Endpoints</strong>
     - <strong>GET /api/lists</strong> => It returns all lists that are public.</br>
       Response:
@@ -196,8 +197,8 @@ The following are the request endpoints for this server:
             "is_public": true
         }
        ```
-       Response:
-       <strong>lists table</strong>
+       Response:</br>
+       <strong>`lists` table</strong>
        ```
         {
             list_id: 122,
@@ -209,7 +210,7 @@ The following are the request endpoints for this server:
             is_public: true
         }
       ```
-      <strong>users_lists table</strong>
+      <strong>`users_lists` table</strong>
       ```
         {
             users_id: 3,
