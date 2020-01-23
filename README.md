@@ -36,6 +36,7 @@ The following are the request endpoints for this server:::
 - List Endpoints
     - &ensp; GET /api/lists  => It returns all lists that are public. 
     &ensp; Response:
+      ```json
        > [
             {
                 "likes": "10",
@@ -51,6 +52,7 @@ The following are the request endpoints for this server:::
             },
             ... all other lists that match query
         ]
+        ```
     - &ensp; GET /api/lists/user => It returns all lists from currently logged in user.
     &ensp; Response:
       > [
