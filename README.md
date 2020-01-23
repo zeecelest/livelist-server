@@ -228,8 +228,8 @@ The following are the request endpoints for this server:
             "like": "0"
         }
         ```
-    - &ensp; DELETE /api/lists/:list_id => It will delete a list from the `lists` table by list_id.</br>
-    - &ensp; PATCH /api/lists/:list_id => It will update the `lists` table by list_id.</br>
+    - <strong>DELETE /api/lists/:list_id</strong> => It will delete a list from the `lists` table by list_id.</br>
+    - <strong>PATCH /api/lists/:list_id</strong> => It will update the `lists` table by list_id.</br>
     Request:
     ```
         {
@@ -253,11 +253,5 @@ The following are the request endpoints for this server:
             "description": "new stuff"
         }
     ```
-
-## Getting Started
-For Devs :
-- npm i;
-- createdb -U dunder_mifflin social-playlist-test;
-- createdb -U dunder_mifflin social-playlist;
 
 Copyright © 2020
