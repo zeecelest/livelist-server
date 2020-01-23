@@ -34,10 +34,10 @@ The following are the request endpoints for this server:::
     
     
 - List Endpoints
-    - &ensp; GET /api/lists  => It returns all lists that are public. 
+    - &ensp; GET /api/lists  => It returns all lists that are public. </br>
     &ensp; Response:
-      ```json
-       > [
+      ```
+        [
             {
                 "likes": "10",
                 "liked_by_user": "1",
