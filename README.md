@@ -1,10 +1,10 @@
-## Social-Playlist Server
+## Live List Server
 
 It is a collaboration between [Daniel Lee Bright](https://github.com/Brahyt), [Glaiza Wagner](https://github.com/glaizawagner), [Wesley Jacobs](https://github.com/wjacobs71086), [Julio Hernandez](https://github.com/hernandez-crypto), and [Lazandrea Celestine](https://github.com/zeecelest).
 
 - [Live app](https://social-playlist.netlify.com)
-- [Server-Repo](https://github.com/thinkful-ei-heron/SocialPlaylist-server)
-- [Client-Repo](https://github.com/thinkful-ei-heron/SocialPlaylist-Client)
+- [Server-repo](https://github.com/thinkful-ei-heron/SocialPlaylist-server)
+- [Client-repo](https://github.com/thinkful-ei-heron/SocialPlaylist-Client)
 - [Heroku-endpoint](https://still-fortress-90057.herokuapp.com)
 - [Heroku-git](https://git.heroku.com/still-fortress-90057.git)
 
