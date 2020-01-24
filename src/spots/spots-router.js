@@ -33,22 +33,27 @@ spotsRouter
         });
         ress.on('end', () => {
           body = JSON.parse(body);
-          let newSpot = {
-            address: address.replace(/[+]/g, ' '),
-            city: city.replace(/[_]/g, ' '),
-            tags,
-            lat: body.results[0].geometry.location.lat,
-            lon: body.results[0].geometry.location.lng,
-            name,
-            state,
-          };
-          return SpotsService.insertSpot(
-            req.app.get('db'),
-            newSpot,
-            list_id,
-          ).then(spot => {
-            return res.status(200).json(spot);
-          });
+          try {
+            let newSpot = {
+              address: address.replace(/[+]/g, ' '),
+              city: city.replace(/[_]/g, ' '),
+              tags,
+              lat: body.results[0].geometry.location.lat,
+              lon: body.results[0].geometry.location.lng,
+              name,
+              state,
+            };
+            return SpotsService.insertSpot(
+              req.app.get('db'),
+              newSpot,
+              list_id,
+            ).then(spot => {
+              return res.status(200).json(spot);
+            });
+          }
+          catch (error){
+            next(error)
+          }
         });
       },
     );
