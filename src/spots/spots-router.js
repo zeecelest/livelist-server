@@ -19,6 +19,7 @@ spotsRouter
     }
   })
   .post(jsonBodyParser, (req, res, next) => {
+    try{
     let {list_id, name, address, city, state, tags} = req.body;
     address = address.replace(/ /g, '+');
     city = city.replace(/ /g, '+');
@@ -51,6 +52,10 @@ spotsRouter
         });
       },
     );
+    }
+    catch (error){
+      next(error);
+    }
     //    for (const field of ['list_id', 'name', 'city', 'state', 'address'])
     //      if (!req.body[field])
     //        return res.status(400).json({
