@@ -50,7 +50,6 @@ userRouter
   })
   .get((req, res, next) => {
     try {
-      console.log(req);
       res.status(200);
     } catch (error) {
       next(error);

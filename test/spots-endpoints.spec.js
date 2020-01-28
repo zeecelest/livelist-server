@@ -146,15 +146,4 @@ describe('Spots Endpoint', function() {
       }
     });
   });
-
-  describe(`DELETE api/spots/1`, () => {
-    context(`Given an existing id`, () => {
-      it(`responds with 200`, () => {
-        return supertest(app)
-          .delete('/api/spots/1')
-          .set('Authorization', bearerToken)
-          .expect(200);
-      });
-    });
-  });
 });

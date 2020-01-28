@@ -132,7 +132,6 @@ listsRouter
     }
   })
   .patch(jsonBodyParser, (req, res, next) => {
-    console.log(req.body);
     const { city, state, name, is_public, tags, description } = req.body;
     for (const field of ['city', 'state', 'name', 'is_public', 'tags'])
       if (req.body[field] === undefined)

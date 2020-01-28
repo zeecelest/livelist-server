@@ -2,7 +2,7 @@
 
 It is a collaboration between [Daniel Lee Bright](https://github.com/Brahyt), [Glaiza Wagner](https://github.com/glaizawagner), [Wesley Jacobs](https://github.com/wjacobs71086), [Julio Hernandez](https://github.com/hernandez-crypto), and [Lazandrea Celestine](https://github.com/zeecelest).
 
-- [Live app](https://social-playlist.netlify.com)
+- [Live app](https://www.live-list.org/)
 - [Server-repo](https://github.com/thinkful-ei-heron/SocialPlaylist-server)
 - [Client-repo](https://github.com/thinkful-ei-heron/SocialPlaylist-Client)
 - [Heroku-endpoint](https://still-fortress-90057.herokuapp.com)

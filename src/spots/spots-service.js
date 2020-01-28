@@ -3,7 +3,6 @@ const SpotsService = {
     return knex.select('*').from('spots');
   },
   deleteSpotReference(knex, spot_id, user_id) {
-    console.log(user_id, spot_id);
     return knex.raw(`
       BEGIN;
         DO $$
@@ -107,7 +106,6 @@ const SpotsService = {
       .first();
   },
   updateSpot(knex, spot_id, user_id, list_id, newSpot) {
-    console.log(newSpot, spot_id, user_id, list_id);
     return knex
       .raw(
         `
