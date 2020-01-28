@@ -10,6 +10,7 @@ const jsonBodyParser = express.json();
 listsRouter
   .use(requireAuth)
   .route('/')
+/*Returns all lists, includes the ammount of likes and if its liked by current user */
   .get((req, res, next) => {
     try {
       ListsService.getAllLists(req.app.get('db'), req.user.id).then((lists) => {
@@ -23,6 +24,7 @@ listsRouter
       next(error);
     }
   })
+/*Adds new record to lists table and a refrence to users_lists table */
   .post(jsonBodyParser, (req, res, next) => {
     const { city, state, name, is_public, tags, description } = req.body;
     for (const field of ['name', 'city', 'state', 'is_public'])
@@ -52,6 +54,7 @@ listsRouter
 listsRouter
   .use(requireAuth)
   .route('/user')
+/*Returns all lists from logged in user*/
   .get((req, res, next) => {
     return ListsService.getAllListsFromUser(
       req.app.get('db'),
@@ -67,6 +70,8 @@ listsRouter
 
 listsRouter
   .use(requireAuth)
+/*Returns the list record from list table and joins it to all the spot 
+  * records that are refrenced on the lists_spots table*/
   .route('/:list_id')
   .get((req, res, next) => {
     let list = {};
@@ -113,6 +118,7 @@ listsRouter
       next(error);
     }
   })
+/*Delete list record from lists and deletes the record found in users_lists*/
   .delete((req, res, next) => {
     try {
       let db = req.app.get('db');
@@ -139,7 +145,6 @@ listsRouter
           error: `Missing '${field}' in request body`
         });
     try {
-      // need to add verification check to make sure that user owns said list
       let editList = {
         city,
         state,
@@ -177,6 +182,7 @@ listsRouter
     }
   });
 
+/*Returns the lists that belong to a specific city*/
 listsRouter
   .use(requireAuth)
   .route('/city/:city')
