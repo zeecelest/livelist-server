@@ -37,43 +37,7 @@ const SpotsService = {
         FROM spots
         WHERE id = 1;
       COMMIT
-
-
     `);
-    //    return knex.raw(`
-    //      BEGIN;
-    //        DELETE
-    //        FROM lists_spots
-    //        WHERE spot_id = ${spot_id}
-    //        AND list_id = (
-    //          SELECT
-    //            users_lists.list_id
-    //            FROM users_lists
-    //            JOIN lists_spots
-    //            ON lists_spots.list_id = users_lists.list_id
-    //            WHERE users_lists.users_id = ${user_id}
-    //            AND lists_spots.spot_id = ${spot_id}
-    //        );
-    //        DELETE
-    //        FROM spots
-    //        WHERE id = ${spot_id};
-    //      COMMIT;
-    //    `)
-    //    return knex.transaction((trx) => {
-    //      return knex('lists_spots')
-    //        .transacting(trx)
-    //        .delete()
-    //        .where({spot_id})
-    //        .then(resp => {
-    //          return knex('spots')
-    //            .transacting(trx)
-    //            .delete()
-    //            .where({ id: spot_id })
-    //            .then((resp2) => {
-    //              return resp2;
-    //            });
-    //        });
-    //    });
   },
   insertSpot(knex, newSpot, list_id) {
     return knex.transaction(trx => {

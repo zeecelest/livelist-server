@@ -9,6 +9,7 @@ const API_KEY = process.env.API_GEO_KEY;
 spotsRouter
   .use(requireAuth)
   .route('/')
+  /*Return all records on spots*/
   .get((req, res, next) => {
     try {
       SpotsService.getAllSpots(req.app.get('db')).then(spots => {
@@ -18,73 +19,55 @@ spotsRouter
       next(error);
     }
   })
+  /* Creates records in spots, lists_spots. Returns spot with lat/lng
+   * from Google Geocode API */
   .post(jsonBodyParser, (req, res, next) => {
-    try{
-    let {list_id, name, address, city, state, tags} = req.body;
-    address = address.replace(/ /g, '+');
-    city = city.replace(/ /g, '+');
-    https.get(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${address},+${city},+${state}&key=${API_KEY}`,
-      ress => {
-        ress.setEncoding('utf8');
-        let body = '';
-        ress.on('data', data => {
-          body += data;
-        });
-        ress.on('end', () => {
-          body = JSON.parse(body);
-          try {
-            let newSpot = {
-              address: address.replace(/[+]/g, ' '),
-              city: city.replace(/[_]/g, ' '),
-              tags,
-              lat: body.results[0].geometry.location.lat,
-              lon: body.results[0].geometry.location.lng,
-              name,
-              state,
-            };
-            return SpotsService.insertSpot(
-              req.app.get('db'),
-              newSpot,
-              list_id,
-            ).then(spot => {
-              return res.status(200).json(spot);
-            });
-          }
-          catch (error){
-            next(error)
-          }
-        });
-      },
-    );
-    }
-    catch (error){
+    try {
+      let {list_id, name, address, city, state, tags} = req.body;
+      address = address.replace(/ /g, '+');
+      city = city.replace(/ /g, '+');
+      /*Using Google-GeoCode - returns the lat and lng of addresses
+       * Doc: https://developers.google.com/maps/documentation/geocoding/start*/
+      https.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${address},+${city},+${state}&key=${API_KEY}`,
+        ress => {
+          ress.setEncoding('utf8');
+          let body = '';
+          ress.on('data', data => {
+            body += data;
+          });
+          ress.on('end', () => {
+            body = JSON.parse(body);
+            try {
+              let newSpot = {
+                address: address.replace(/[+]/g, ' '),
+                city: city.replace(/[_]/g, ' '),
+                tags,
+                lat: body.results[0].geometry.location.lat,
+                lon: body.results[0].geometry.location.lng,
+                name,
+                state,
+              };
+              return SpotsService.insertSpot(
+                req.app.get('db'),
+                newSpot,
+                list_id,
+              ).then(spot => {
+                return res.status(200).json(spot);
+              });
+            } catch (error) {
+              next(error);
+            }
+          });
+        },
+      );
+    } catch (error) {
       next(error);
     }
-    //    for (const field of ['list_id', 'name', 'city', 'state', 'address'])
-    //      if (!req.body[field])
-    //        return res.status(400).json({
-    //          error: `Missing '${field}' in request body`
-    //        });
-    //    try {
-    //      let newSpot = {
-    //        address,
-    //        city,
-    //        lat,
-    //        tags,
-    //        lon,
-    //        name,
-    //        state
-    //      };
-    //      SpotsService.insertSpot(req.app.get('db'), newSpot).then(spot => {
-    //        res.status(200).json(spot);
-    //      });
-    //    } catch (error) {
-    //      next(error);
-    //    }
   });
 spotsRouter
   .use(requireAuth)
+  /*Returns the record for the spot*/
   .route('/:spot_id')
   .get((req, res, next) => {
     try {
@@ -125,6 +108,8 @@ spotsRouter
       next(error);
     }
   })
+  /*If record belongs to logged in user;
+   * Delete record found in spot, lists_spots.*/
   .delete((req, res, next) => {
     try {
       return SpotsService.deleteSpotReference(
